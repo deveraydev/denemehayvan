@@ -5,72 +5,138 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PatiFon - Sokak Hayvanları Destek Platformu</title>
   <link rel="stylesheet" href="style.css">
-  <!-- İkonlar için FontAwesome CDN -->
+  <!-- FontAwesome İkon Seti -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Üst Bar -->
+  <!-- ==================== LOGİN EKRANI ==================== -->
+  <div id="login-screen" class="login-wrapper">
+    <div class="login-card">
+      <div class="login-hero">
+        <div class="paw-badge">
+          <i class="fa-solid fa-paw"></i>
+        </div>
+        <h1>PatiFon</h1>
+        <p>Bakıma muhtaç canlara umut ol!</p>
+      </div>
+
+      <!-- Giriş Formu -->
+      <form id="login-form" class="login-form">
+        <div class="input-group">
+          <label for="username"><i class="fa-solid fa-user"></i> Kullanıcı Adı</label>
+          <input type="text" id="username" placeholder="Örn: admin" required>
+        </div>
+
+        <div class="input-group">
+          <label for="password"><i class="fa-solid fa-lock"></i> Şifre</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <div id="login-error" class="error-msg hidden">
+          <i class="fa-solid fa-triangle-exclamation"></i> Kullanıcı adı veya şifre hatalı!
+        </div>
+
+        <button type="submit" class="btn-login">
+          <span>Giriş Yap</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+
+      <!-- Test Kullanıcı Bilgisi Notu -->
+      <div class="test-credentials-box">
+        <i class="fa-solid fa-circle-info"></i>
+        <span>Test Girişi: <strong>K.Adı: admin</strong> | <strong>Şifre: admin</strong></span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==================== UYGULAMA ANA GÖVDE ==================== -->
+  <div id="app-container" class="app-container hidden">
+    
+    <!-- Üst Bar (Header) -->
     <header class="app-header">
-      <div class="logo">
-        <i class="fa-solid fa-heart text-red"></i>
+      <div class="logo" onclick="switchTab('feed')">
+        <i class="fa-solid fa-paw text-orange"></i>
         <span>PatiFon</span>
       </div>
-      <div class="badge">
-        <i class="fa-solid fa-shield-halved"></i>
-        <span>Şeffaf Bağış</span>
+      <div class="header-right">
+        <div class="user-chip">
+          <i class="fa-solid fa-circle-user"></i>
+          <span id="header-user-name">admin</span>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()" title="Çıkış Yap">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </header>
 
-    <!-- Ana İçerik -->
+    <!-- Ana İçerik Alanı -->
     <main class="app-main">
-      <!-- 1. Akış Sekmesi (Hayvanlar) -->
+
+      <!-- 1. AKIŞ SEKMESİ (Hayvan Listesi) -->
       <section id="feed-tab" class="tab-content active">
+        <div class="feed-header-info">
+          <h2>Destek Bekleyen Dostlarımız</h2>
+          <p>Gönderiye tıklayarak detaylı hikayesini ve bakım listesini inceleyebilirsiniz.</p>
+        </div>
         <div id="pets-list" class="pets-container"></div>
       </section>
 
-      <!-- 2. Sıralama Sekmesi -->
+      <!-- 2. GÖNDERİ DETAY SEKMESİ (Post Detail) -->
+      <section id="pet-detail-tab" class="tab-content">
+        <button class="back-btn" onclick="switchTab('feed')">
+          <i class="fa-solid fa-arrow-left"></i> Akışa Dön
+        </button>
+
+        <div id="pet-detail-content" class="pet-detail-wrapper">
+          <!-- JS ile doldurulacak -->
+        </div>
+      </section>
+
+      <!-- 3. GENEL LİDERLİK TABLOSU SEKMESİ -->
       <section id="leaderboard-tab" class="tab-content">
         <div class="leaderboard-hero">
-          <i class="fa-solid fa-trophy hero-icon"></i>
+          <i class="fa-solid fa-award hero-icon"></i>
           <h2>Genel Destek Liderleri</h2>
-          <p>En çok katkıda bulunan ilk 3 destekçimize yıllık organizasyonumuzda özel plaket takdim edilmektedir.</p>
+          <p>En çok katkıda bulunan ilk 3 koruyucu ailemize yıllık gala gecemizde özel plaket takdim edilmektedir.</p>
         </div>
         <div id="global-leaderboard-list" class="leaderboard-card"></div>
       </section>
+
     </main>
 
-    <!-- Abonelik Satın Alma Modalı -->
+    <!-- Abonelik Hızlı Satın Alma Modalı -->
     <div id="subscribe-modal" class="modal-overlay hidden">
       <div class="modal-content">
         <div class="modal-header">
           <h3 id="modal-pet-name">Abonelik Paketi Seç</h3>
           <button id="close-modal-btn" class="close-btn">&times;</button>
         </div>
-        <p class="modal-desc">Her ay düzenli olarak yenilenen abonelik paketini seçebilirsiniz:</p>
+        <p class="modal-desc">Seçeceğiniz paket her ay otomatik yenilenir ve doğrudan dostumuzun bakım hesabına aktarılır:</p>
         
         <div class="tier-options">
-          <button class="tier-btn" onclick="handleSubscribe(100, 'Bronz')">
+          <button class="tier-btn" onclick="processSubscription(100, 'Bronz')">
             <div class="tier-info">
-              <strong>Bronz Paket</strong>
-              <span>Temel beslenme desteği</span>
+              <strong>Bronz Paket 🥉</strong>
+              <span>Aylık Temel Mama & Beslenme</span>
             </div>
             <span class="price">₺100/ay</span>
           </button>
 
-          <button class="tier-btn" onclick="handleSubscribe(250, 'Gümüş')">
+          <button class="tier-btn" onclick="processSubscription(250, 'Gümüş')">
             <div class="tier-info">
-              <strong>Gümüş Paket</strong>
-              <span>Aşı ve bakım desteği</span>
+              <strong>Gümüş Paket 🥈</strong>
+              <span>Aşı, Parazit & Hijyen Bakımı</span>
             </div>
             <span class="price">₺250/ay</span>
           </button>
 
-          <button class="tier-btn" onclick="handleSubscribe(500, 'Altın (Pro)')">
+          <button class="tier-btn" onclick="processSubscription(500, 'Altın (Pro) 🥇')">
             <div class="tier-info">
-              <strong>Altın Paket (Pro)</strong>
-              <span>Tam kapsamlı sağlık & bakım</span>
+              <strong>Altın Paket (Pro) 🥇</strong>
+              <span>Tam Kapsamlı Tedavi & Konaklama</span>
             </div>
             <span class="price">₺500/ay</span>
           </button>
@@ -78,15 +144,15 @@
       </div>
     </div>
 
-    <!-- Alt Navigasyon -->
+    <!-- Alt Navigasyon Barı -->
     <nav class="app-nav">
       <button id="nav-feed" class="nav-item active" onclick="switchTab('feed')">
-        <i class="fa-solid fa-paw"></i>
-        <span>Hayvanlar</span>
+        <i class="fa-solid fa-house-chimney-window"></i>
+        <span>Akış</span>
       </button>
       <button id="nav-leaderboard" class="nav-item" onclick="switchTab('leaderboard')">
         <i class="fa-solid fa-trophy"></i>
-        <span>Sıralama</span>
+        <span>Plaket Sıralaması</span>
       </button>
     </nav>
   </div>
