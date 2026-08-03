@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PatiFon - Sokak Hayvanları Destek Platformu</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- İkonlar için FontAwesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Üst Bar -->
+    <header class="app-header">
+      <div class="logo">
+        <i class="fa-solid fa-heart text-red"></i>
+        <span>PatiFon</span>
+      </div>
+      <div class="badge">
+        <i class="fa-solid fa-shield-halved"></i>
+        <span>Şeffaf Bağış</span>
+      </div>
+    </header>
+
+    <!-- Ana İçerik -->
+    <main class="app-main">
+      <!-- 1. Akış Sekmesi (Hayvanlar) -->
+      <section id="feed-tab" class="tab-content active">
+        <div id="pets-list" class="pets-container"></div>
+      </section>
+
+      <!-- 2. Sıralama Sekmesi -->
+      <section id="leaderboard-tab" class="tab-content">
+        <div class="leaderboard-hero">
+          <i class="fa-solid fa-trophy hero-icon"></i>
+          <h2>Genel Destek Liderleri</h2>
+          <p>En çok katkıda bulunan ilk 3 destekçimize yıllık organizasyonumuzda özel plaket takdim edilmektedir.</p>
+        </div>
+        <div id="global-leaderboard-list" class="leaderboard-card"></div>
+      </section>
+    </main>
+
+    <!-- Abonelik Satın Alma Modalı -->
+    <div id="subscribe-modal" class="modal-overlay hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 id="modal-pet-name">Abonelik Paketi Seç</h3>
+          <button id="close-modal-btn" class="close-btn">&times;</button>
+        </div>
+        <p class="modal-desc">Her ay düzenli olarak yenilenen abonelik paketini seçebilirsiniz:</p>
+        
+        <div class="tier-options">
+          <button class="tier-btn" onclick="handleSubscribe(100, 'Bronz')">
+            <div class="tier-info">
+              <strong>Bronz Paket</strong>
+              <span>Temel beslenme desteği</span>
+            </div>
+            <span class="price">₺100/ay</span>
+          </button>
+
+          <button class="tier-btn" onclick="handleSubscribe(250, 'Gümüş')">
+            <div class="tier-info">
+              <strong>Gümüş Paket</strong>
+              <span>Aşı ve bakım desteği</span>
+            </div>
+            <span class="price">₺250/ay</span>
+          </button>
+
+          <button class="tier-btn" onclick="handleSubscribe(500, 'Altın (Pro)')">
+            <div class="tier-info">
+              <strong>Altın Paket (Pro)</strong>
+              <span>Tam kapsamlı sağlık & bakım</span>
+            </div>
+            <span class="price">₺500/ay</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Alt Navigasyon -->
+    <nav class="app-nav">
+      <button id="nav-feed" class="nav-item active" onclick="switchTab('feed')">
+        <i class="fa-solid fa-paw"></i>
+        <span>Hayvanlar</span>
+      </button>
+      <button id="nav-leaderboard" class="nav-item" onclick="switchTab('leaderboard')">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Sıralama</span>
+      </button>
+    </nav>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
