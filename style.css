@@ -3,47 +3,69 @@
   --primary-dark: #047857;
   --accent: #f59e0b;
   --accent-hover: #d97706;
-  --bg-light: #f9fafb;
+  --bg-app: #f3f4f6;
+  --bg-card: #ffffff;
   --text-dark: #111827;
   --text-muted: #6b7280;
-  --white: #ffffff;
   --border: #e5e7eb;
-  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --nav-height: 65px;
+  --header-height: 60px;
 }
 
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  background-color: var(--bg-light);
+  background-color: #1a1a1a; /* Masaüstü görünümünde siyah fon */
   color: var(--text-dark);
-  line-height: 1.6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-.container {
-  max-width: 1140px;
-  margin: 0 auto;
-  padding: 0 20px;
+/* Mobil Shell (Uygulama Kasası) */
+.app-shell {
+  width: 100%;
+  max-width: 430px; /* iPhone Pro Max genişliği */
+  height: 100vh;
+  max-height: 932px;
+  background-color: var(--bg-app);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border-radius: 0;
 }
 
-/* --- 1. AÇILIŞ VİDEO KATMANI (INTRO OVERLAY) --- */
+@media (min-width: 440px) {
+  .app-shell {
+    border-radius: 40px;
+    height: 92vh;
+    border: 8px solid #2d2d2d;
+  }
+}
+
+/* --- 1. AÇILIŞ VİDEOSU (GEÇ BUTONU YOK) --- */
 #intro-overlay {
-  position: fixed;
+  position: absolute;
   top: 0;
   left: 0;
-  width: 100vw;
-  height: 100vh;
+  width: 100%;
+  height: 100%;
   background-color: #000000;
   z-index: 999999;
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 1;
-  transition: opacity 0.5s ease;
+  transition: opacity 0.6s ease-in-out;
 }
 
 #intro-video {
@@ -52,406 +74,276 @@ body {
   object-fit: cover;
 }
 
-#skip-btn {
-  position: absolute;
-  top: 24px;
-  right: 24px;
-  background: rgba(0, 0, 0, 0.65);
-  color: var(--white);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 10px 22px;
-  border-radius: 20px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  backdrop-filter: blur(4px);
-  z-index: 1000000;
-  transition: all 0.2s ease;
-}
-
-#skip-btn:hover {
-  background: rgba(0, 0, 0, 0.9);
-  transform: scale(1.05);
-}
-
-/* --- 2. NAVBAR --- */
-.navbar {
-  background: var(--white);
+/* --- 2. HEADER --- */
+.app-header {
+  height: var(--header-height);
+  background: var(--bg-card);
   border-bottom: 1px solid var(--border);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-.nav-container {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70px;
+  padding: 0 16px;
+  z-index: 10;
 }
 
-.logo {
+.header-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  text-decoration: none;
-  font-size: 24px;
+  gap: 8px;
   font-weight: 800;
-  color: var(--text-dark);
-}
-
-.logo-icon {
-  width: 40px;
-  height: 40px;
-  background: var(--primary);
-  color: var(--white);
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   font-size: 20px;
 }
 
-.logo-text span {
-  color: var(--accent);
-}
-
-.nav-menu {
+.logo-icon {
+  width: 32px;
+  height: 32px;
+  background: var(--primary);
+  color: #fff;
+  border-radius: 10px;
   display: flex;
-  gap: 24px;
+  align-items: center;
+  justify-content: center;
 }
 
-.nav-menu a {
-  text-decoration: none;
-  color: var(--text-muted);
-  font-weight: 500;
-  transition: color 0.2s;
+.logo-text span { color: var(--accent); }
+
+.icon-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+  font-size: 16px;
+  cursor: pointer;
 }
 
-.nav-menu a:hover, .nav-menu a.active {
-  color: var(--primary);
+/* --- 3. ANA KAYDIRILABİLİR İÇERİK --- */
+.app-main {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  padding-bottom: calc(var(--nav-height) + 20px);
 }
 
-/* --- 3. HERO --- */
-.hero {
-  padding: 80px 0 60px;
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.05) 0%, rgba(245, 158, 11, 0.05) 100%);
+.mobile-hero {
+  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(245, 158, 11, 0.1));
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 20px;
   text-align: center;
 }
 
-.hero h1 {
-  font-size: 42px;
-  font-weight: 800;
-  margin: 16px 0;
-}
+.mobile-hero h2 { font-size: 22px; font-weight: 800; margin: 8px 0; }
+.mobile-hero p { font-size: 13px; color: var(--text-muted); }
 
-.highlight {
-  color: var(--primary);
-}
-
-.hero p {
-  max-width: 680px;
-  margin: 0 auto 30px;
-  color: var(--text-muted);
-  font-size: 18px;
-}
-
-.hero-stats {
+.hero-stats-mini {
   display: flex;
-  justify-content: center;
-  gap: 40px;
-  margin-top: 40px;
+  justify-content: space-around;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(0,0,0,0.05);
 }
 
-.stat-item h3 {
-  font-size: 32px;
-  color: var(--primary);
-  font-weight: 800;
-}
+.stat-mini strong { display: block; font-size: 15px; color: var(--primary); }
+.stat-mini span { font-size: 11px; color: var(--text-muted); }
 
-.stat-item p {
-  font-size: 14px;
-  color: var(--text-muted);
-}
+/* SEKME YÖNETİMİ */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
 
-/* --- 4. KARTLAR VE FİLTRELEME --- */
-.section {
-  padding: 70px 0;
-}
+.section-title { margin-bottom: 14px; }
+.section-title h3 { font-size: 18px; font-weight: 800; }
+.section-title p { font-size: 12px; color: var(--text-muted); }
 
-.bg-light {
-  background-color: #f3f4f6;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 40px;
-}
-
-.section-header h2 {
-  font-size: 32px;
-  font-weight: 800;
-}
-
-.section-header p {
-  color: var(--text-muted);
-}
-
-.filter-tabs {
+/* FİLTRE HAPLARI (PILLS) */
+.filter-pills {
   display: flex;
-  justify-content: center;
-  gap: 12px;
-  margin-bottom: 30px;
+  gap: 8px;
+  margin-bottom: 16px;
+  overflow-x: auto;
 }
 
-.tab-btn {
-  padding: 8px 20px;
+.pill-btn {
+  padding: 6px 16px;
   border-radius: 20px;
   border: 1px solid var(--border);
-  background: var(--white);
-  cursor: pointer;
+  background: var(--bg-card);
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-muted);
-  transition: all 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
 }
 
-.tab-btn.active, .tab-btn:hover {
+.pill-btn.active {
   background: var(--primary);
-  color: var(--white);
+  color: #fff;
   border-color: var(--primary);
 }
 
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 24px;
-}
+/* KARTLAR */
+.cards-stack { display: flex; flex-direction: column; gap: 16px; }
 
-.card {
-  background: var(--white);
+.mobile-card {
+  background: var(--bg-card);
   border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
   border: 1px solid var(--border);
-  transition: transform 0.2s;
 }
 
-.card:hover {
-  transform: translateY(-4px);
-}
-
-.card-image {
-  position: relative;
-  height: 200px;
-}
-
-.card-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+.card-media { position: relative; height: 160px; }
+.card-media img { width: 100%; height: 100%; object-fit: cover; }
 
 .card-tag {
-  position: absolute;
-  top: 12px;
-  left: 12px;
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--white);
+  position: absolute; top: 10px; left: 10px;
+  padding: 4px 10px; border-radius: 10px;
+  font-size: 11px; font-weight: 700; color: #fff;
 }
 
 .tag-urgent { background: #ef4444; }
 .tag-info { background: var(--accent); }
 
-.card-body {
-  padding: 20px;
-}
+.card-info { padding: 14px; }
+.card-header { display: flex; justify-content: space-between; align-items: center; }
+.card-header h4 { font-size: 17px; font-weight: 700; }
+.loc { font-size: 12px; color: var(--text-muted); }
 
-.card-body h3 {
-  font-size: 20px;
+.card-info p { font-size: 13px; color: var(--text-muted); margin: 6px 0 12px; }
+
+.mobile-progress { margin-bottom: 12px; }
+.progress-labels { display: flex; justify-content: space-between; font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+.progress-track { height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--primary); }
+
+.card-btns { display: flex; gap: 8px; }
+.card-btns .btn { flex: 1; padding: 8px; font-size: 12px; text-align: center; }
+
+/* PATİ MARKET & LİDERLİK */
+.market-list { display: flex; flex-direction: column; gap: 10px; }
+.market-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg-card); padding: 12px;
+  border-radius: 12px; border: 1px solid var(--border);
+}
+.market-icon { font-size: 24px; color: var(--accent); }
+.market-details { flex: 1; }
+.market-details h5 { font-size: 14px; font-weight: 700; }
+.market-details span { font-size: 13px; color: var(--primary); font-weight: 800; }
+
+.leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
+.leader-item {
+  display: flex; align-items: center; gap: 12px;
+  background: var(--bg-card); padding: 12px;
+  border-radius: 12px; border: 1px solid var(--border);
+}
+.rank-badge {
+  width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 12px; background: #f3f4f6;
+}
+.rank-1 .rank-badge { background: #fef3c7; color: #b45309; }
+.rank-2 .rank-badge { background: #e5e7eb; color: #374151; }
+.rank-3 .rank-badge { background: #ffedd5; color: #c2410c; }
+.leader-info { flex: 1; display: flex; flex-direction: column; }
+.leader-info strong { font-size: 14px; }
+.leader-info small { font-size: 11px; color: var(--text-muted); }
+.leader-amount { font-weight: 800; color: var(--primary); font-size: 14px; }
+
+/* --- 4. ALT GEZİNME MENÜSÜ (BOTTOM NAV BAR) --- */
+.bottom-nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: var(--nav-height);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   align-items: center;
+  z-index: 100;
 }
 
-.location {
-  font-size: 13px;
-  color: var(--text-muted);
-  font-weight: normal;
-}
-
-.card-body p {
-  font-size: 14px;
-  color: var(--text-muted);
-  margin: 10px 0 16px;
-}
-
-.progress-bar-container {
-  margin-bottom: 16px;
-}
-
-.progress-info {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  margin-bottom: 6px;
-}
-
-.progress-bar {
-  height: 8px;
-  background: #e5e7eb;
-  border-radius: 4px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  height: 100%;
-  background: var(--primary);
-}
-
-.card-actions {
-  display: flex;
-  gap: 10px;
-}
-
-/* --- 5. PATİ MARKET & LİDERLİK --- */
-.market-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-}
-
-.market-card {
-  background: var(--white);
-  padding: 24px;
-  border-radius: 16px;
-  text-align: center;
-  box-shadow: var(--shadow);
-}
-
-.market-icon {
-  font-size: 36px;
-  color: var(--accent);
-  margin-bottom: 12px;
-}
-
-.market-price {
-  display: block;
-  font-size: 22px;
-  font-weight: 800;
-  color: var(--primary);
-  margin: 10px 0;
-}
-
-.leaderboard {
-  max-width: 600px;
-  margin: 0 auto;
-  background: var(--white);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  padding: 10px 20px;
-}
-
-.leader-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--border);
-}
-
-.leader-row:last-child { border-bottom: none; }
-
-.rank { font-weight: 800; width: 40px; }
-.rank-1 .rank { color: #f59e0b; }
-.rank-2 .rank { color: #9ca3af; }
-.rank-3 .rank { color: #d97706; }
-
-/* --- 6. BUTONLAR VE ROZETLER --- */
-.btn {
-  padding: 10px 20px;
-  border-radius: 10px;
+.nav-item {
+  background: none;
   border: none;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-
-.btn-primary { background: var(--primary); color: var(--white); }
-.btn-primary:hover { background: var(--primary-dark); }
-
-.btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
-.btn-outline:hover { background: var(--primary); color: var(--white); }
-
-.btn-accent { background: var(--accent); color: var(--white); }
-.btn-accent:hover { background: var(--accent-hover); }
-
-.btn-full { width: 100%; margin-top: 16px; }
-
-.badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.badge-accent { background: rgba(245, 158, 11, 0.15); color: var(--accent-hover); }
-.badge-gold { background: #fef3c7; color: #b45309; }
-.badge-silver { background: #f3f4f6; color: #4b5563; }
-.badge-bronze { background: #ffedd5; color: #c2410c; }
-
-/* --- 7. MODAL --- */
-.modal-overlay {
-  position: fixed;
-  top:0; left:0; width:100vw; height:100vh;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  justify-content: center;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  z-index: 2000;
-  backdrop-filter: blur(4px);
+  gap: 4px;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  flex: 1;
 }
 
-.modal-card {
-  background: var(--white);
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
-  max-width: 440px;
+.nav-item i { font-size: 18px; }
+.nav-item.active { color: var(--primary); }
+
+/* --- 5. BOTTOM SHEET MODAL --- */
+.modal-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: flex-end;
+  flex-direction: column;
+  z-index: 2000;
+  backdrop-filter: blur(3px);
+}
+
+.bottom-sheet {
+  background: var(--bg-card);
+  border-radius: 20px 20px 0 0;
+  padding: 20px;
   position: relative;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+.sheet-handle {
+  width: 40px; height: 4px; background: var(--border);
+  border-radius: 2px; margin: 0 auto 16px;
 }
 
 .modal-close {
-  position: absolute;
-  top: 16px; right: 20px;
-  border: none; background: transparent;
-  font-size: 24px; cursor: pointer;
+  position: absolute; top: 16px; right: 20px;
+  border: none; background: transparent; font-size: 24px; cursor: pointer;
 }
 
-.form-group { margin: 16px 0; }
+.form-group { margin: 12px 0; }
 .form-input {
   width: 100%; padding: 10px; border-radius: 8px;
-  border: 1px solid var(--border); font-size: 16px; margin-top: 6px;
+  border: 1px solid var(--border); font-size: 15px; margin-top: 4px;
 }
 
 .tip-box {
   background: #f0fdf4; border: 1px solid #bbf7d0;
-  padding: 12px; border-radius: 10px; margin: 16px 0;
+  padding: 10px; border-radius: 10px; margin: 12px 0;
 }
 
-.tip-desc { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+.tip-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
 .total-summary {
   display: flex; justify-content: space-between;
-  font-size: 16px; margin-top: 16px; font-weight: 700;
+  font-size: 15px; margin: 14px 0; font-weight: 700;
 }
 
-.footer {
-  background: var(--text-dark); color: var(--white);
-  padding: 40px 0; text-align: center;
+/* GENEL BUTON STİLLERİ */
+.btn {
+  border: none; border-radius: 8px; font-weight: 700; cursor: pointer;
 }
-
-.footer-logo { font-size: 20px; font-weight: 800; margin-bottom: 10px; }
-.footer-copy { font-size: 12px; color: #9ca3af; margin-top: 20px; }
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-outline { background: transparent; border: 1px solid var(--primary); color: var(--primary); }
+.btn-accent { background: var(--accent); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 11px; border-radius: 6px; }
+.btn-full { width: 100%; padding: 12px; font-size: 14px; }
+.badge { padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }
+.badge-accent { background: rgba(245, 158, 11, 0.15); color: var(--accent-hover); }
