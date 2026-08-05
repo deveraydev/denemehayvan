@@ -1,4 +1,4 @@
-/* Custom Scrollbar Removal for Categories */
+/* Custom Scrollbar Removal for Horizontal Menus */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
