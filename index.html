@@ -2,272 +2,293 @@
 <html lang="tr">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PatiFon - Şeffaf Mikro-Koruyuculuk Platformu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>PatiFon - Mobil Uygulama</title>
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <!-- Açılış Video Katmanı (Intro Overlay) -->
-  <div id="intro-overlay">
-    <video id="intro-video" autoplay muted playsinline>
-      <source src="intro.mp4" type="video/mp4">
-      Tarayıcınız video oynatmayı desteklemiyor.
-    </video>
-    <button id="skip-btn" onclick="closeIntro()">Geç <i class="fa-solid fa-forward"></i></button>
-  </div>
+  <!-- Mobil Shell (Telefon Ekranı Kapsayıcısı) -->
+  <div class="app-shell">
+    
+    <!-- Tam Ekran Açılış Videosu (Geç Butonu Kaldırıldı) -->
+    <div id="intro-overlay">
+      <video id="intro-video" autoplay muted playsinline>
+        <source src="intro.mp4" type="video/mp4">
+        Tarayıcınız video oynatmayı desteklemiyor.
+      </video>
+    </div>
 
-  <!-- Üst Menü (Navbar) -->
-  <header class="navbar">
-    <div class="container nav-container">
-      <a href="#" class="logo">
+    <!-- Mobil Üst Header / Durum Çubuğu Alanı -->
+    <header class="app-header">
+      <div class="header-logo">
         <div class="logo-icon">
           <i class="fa-solid fa-paw"></i>
         </div>
         <span class="logo-text">Pati<span>Fon</span></span>
-      </a>
-      <nav class="nav-menu">
-        <a href="#canlar" class="active">Destek Bekleyen Canlar</a>
-        <a href="#market">Pati Market</a>
-        <a href="#liderler">Liderlik Tablosu</a>
-        <a href="#seffaflik">Şeffaflık</a>
-      </nav>
-      <button class="btn btn-primary" onclick="openModal('Genel Destek', 150)">Koruyucu Ol</button>
-    </div>
-  </header>
+      </div>
+      <button class="icon-btn" onclick="openModal('Genel Destek', 150)">
+        <i class="fa-solid fa-heart"></i>
+      </button>
+    </header>
 
-  <!-- Hero Bölümü -->
-  <section class="hero">
-    <div class="container hero-content">
-      <span class="badge badge-accent"><i class="fa-solid fa-shield-cat"></i> %100 Doğrulanmış Barınak ve Vet Takibi</span>
-      <h1>Sokak Canlarına <br><span class="highlight">Şeffaf Mikro-Koruyucu</span> Olun</h1>
-      <p>Yaptığınız her yardım doğrudan anlaşmalı veteriner kliniğine ve mama tedarikçisine aktarılır. Destek olduğunuz canın sağlık durumunu haftalık videolarla takip edin.</p>
+    <!-- Ana Kaydırılabilir İçerik Alanı -->
+    <main class="app-main">
       
-      <div class="hero-stats">
-        <div class="stat-item">
-          <h3>1,240+</h3>
-          <p>Tedavi Edilen Can</p>
-        </div>
-        <div class="stat-item">
-          <h3>₺480K+</h3>
-          <p>Aktarılan Şeffaf Fon</p>
-        </div>
-        <div class="stat-item">
-          <h3>3,850+</h3>
-          <p>Aktif Koruyucu Aile</p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Destek Bekleyen Canlar -->
-  <section id="canlar" class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Destek Bekleyen Canlar</h2>
-        <p>Aylık mikro-abonelik veya acil tedavi fonu ile bir canın koruyucu ailesi olun.</p>
-      </div>
-
-      <!-- Filtre Butonları -->
-      <div class="filter-tabs">
-        <button class="tab-btn active" onclick="filterCards('all')">Tümü</button>
-        <button class="tab-btn" onclick="filterCards('acil')">Acil Tedavi</button>
-        <button class="tab-btn" onclick="filterCards('mama')">Mama Desteği</button>
-      </div>
-
-      <!-- Kartlar Izgarası -->
-      <div class="cards-grid">
+      <!-- Mobil Banner / Duyuru -->
+      <section class="mobile-hero">
+        <span class="badge badge-accent"><i class="fa-solid fa-shield-cat"></i> %100 Şeffaf Vet Takibi</span>
+        <h2>Sokak Canlarına <br><span class="highlight">Koruyucu Aile</span> Olun</h2>
+        <p>Destekleriniz doğrudan anlaşmalı veteriner kliniklerine aktarılır.</p>
         
-        <!-- Kart 1 -->
-        <div class="card" data-category="acil">
-          <div class="card-image">
-            <span class="card-tag tag-urgent"><i class="fa-solid fa-bolt"></i> Acil Tedavi</span>
-            <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Pamuk">
+        <div class="hero-stats-mini">
+          <div class="stat-mini">
+            <strong>1,240+</strong>
+            <span>Tedavi</span>
           </div>
-          <div class="card-body">
-            <h3>Pamuk <span class="location"><i class="fa-solid fa-location-dot"></i> İzmir / Alsancak</span></h3>
-            <p>Araba çarpması sonucu kalça kırığı teşhisi konuldu. PatiVeteriner kliniğinde ameliyat bekliyor.</p>
-            
-            <div class="progress-bar-container">
-              <div class="progress-info">
-                <span>Toplanan: <b>₺4,200</b></span>
-                <span>Hedef: <b>₺6,000</b></span>
+          <div class="stat-mini">
+            <strong>₺480K+</strong>
+            <span>Aktarılan Fon</span>
+          </div>
+          <div class="stat-mini">
+            <strong>3,850+</strong>
+            <span>Koruyucu</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- SEKMELER (Ekran Değiştirici) -->
+
+      <!-- 1. SEKME: CANLAR (VARSAYILAN EKRAN) -->
+      <section id="tab-canlar" class="tab-content active">
+        <div class="section-title">
+          <h3>Destek Bekleyen Canlar</h3>
+          <p>Mikro-abonelik veya acil tedavi desteği verin.</p>
+        </div>
+
+        <div class="filter-pills">
+          <button class="pill-btn active" onclick="filterCards('all', this)">Tümü</button>
+          <button class="pill-btn" onclick="filterCards('acil', this)">Acil</button>
+          <button class="pill-btn" onclick="filterCards('mama', this)">Mama</button>
+        </div>
+
+        <div class="cards-stack">
+          <!-- Kart 1 -->
+          <div class="mobile-card" data-category="acil">
+            <div class="card-media">
+              <span class="card-tag tag-urgent"><i class="fa-solid fa-bolt"></i> Acil</span>
+              <img src="https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=600&q=80" alt="Pamuk">
+            </div>
+            <div class="card-info">
+              <div class="card-header">
+                <h4>Pamuk</h4>
+                <span class="loc"><i class="fa-solid fa-location-dot"></i> Alsancak</span>
               </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 70%;"></div>
+              <p>Kalça kırığı teşhisi konuldu. Ameliyat masrafları bekleniyor.</p>
+              
+              <div class="mobile-progress">
+                <div class="progress-labels">
+                  <span>Toplanan: ₺4,200</span>
+                  <span>Hedef: ₺6,000</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 70%;"></div>
+                </div>
+              </div>
+
+              <div class="card-btns">
+                <button class="btn btn-outline" onclick="openModal('Pamuk (Acil)', 100)">₺100 Destek</button>
+                <button class="btn btn-primary" onclick="openModal('Pamuk (Koruyucu)', 250)">Aylık Koruyucu</button>
               </div>
             </div>
+          </div>
 
-            <div class="card-actions">
-              <button class="btn btn-outline" onclick="openModal('Pamuk (Acil Tedavi)', 100)">₺100 Destek Ol</button>
-              <button class="btn btn-primary" onclick="openModal('Pamuk (Koruyucu Aile)', 250)">Aylık Koruyucu Ol</button>
+          <!-- Kart 2 -->
+          <div class="mobile-card" data-category="mama">
+            <div class="card-media">
+              <span class="card-tag tag-info"><i class="fa-solid fa-bowl-food"></i> Beslenme</span>
+              <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Duman">
+            </div>
+            <div class="card-info">
+              <div class="card-header">
+                <h4>Duman</h4>
+                <span class="loc"><i class="fa-solid fa-location-dot"></i> Buca</span>
+              </div>
+              <p>Özel böbrek hastası maması gerekiyor.</p>
+              
+              <div class="mobile-progress">
+                <div class="progress-labels">
+                  <span>Toplanan: ₺1,800</span>
+                  <span>Hedef: ₺2,500</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 72%;"></div>
+                </div>
+              </div>
+
+              <div class="card-btns">
+                <button class="btn btn-outline" onclick="openModal('Duman (Mama)', 50)">₺50 Paket</button>
+                <button class="btn btn-primary" onclick="openModal('Duman (Koruyucu)', 150)">Aylık Koruyucu</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kart 3 -->
+          <div class="mobile-card" data-category="acil">
+            <div class="card-media">
+              <span class="card-tag tag-urgent"><i class="fa-solid fa-stethoscope"></i> Fizik Tedavi</span>
+              <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80" alt="Gözde">
+            </div>
+            <div class="card-info">
+              <div class="card-header">
+                <h4>Gözde</h4>
+                <span class="loc"><i class="fa-solid fa-location-dot"></i> Karşıyaka</span>
+              </div>
+              <p>Gençlik hastalığı sonrası fizik tedavi seansları sürüyor.</p>
+              
+              <div class="mobile-progress">
+                <div class="progress-labels">
+                  <span>Toplanan: ₺3,100</span>
+                  <span>Hedef: ₺8,000</span>
+                </div>
+                <div class="progress-track">
+                  <div class="progress-fill" style="width: 38%;"></div>
+                </div>
+              </div>
+
+              <div class="card-btns">
+                <button class="btn btn-outline" onclick="openModal('Gözde (Fizik)', 200)">₺200 Destek</button>
+                <button class="btn btn-primary" onclick="openModal('Gözde (Koruyucu)', 300)">Aylık Koruyucu</button>
+              </div>
             </div>
           </div>
         </div>
+      </section>
 
-        <!-- Kart 2 -->
-        <div class="card" data-category="mama">
-          <div class="card-image">
-            <span class="card-tag tag-info"><i class="fa-solid fa-bowl-food"></i> Beslenme</span>
-            <img src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=600&q=80" alt="Duman">
-          </div>
-          <div class="card-body">
-            <h3>Duman <span class="location"><i class="fa-solid fa-location-dot"></i> İzmir / Buca</span></h3>
-            <p>Buca Yaşam Alanı'nda yaşayan Duman ve 12 arkadaşı için özel böbrek hastası maması gerekiyor.</p>
-            
-            <div class="progress-bar-container">
-              <div class="progress-info">
-                <span>Toplanan: <b>₺1,800</b></span>
-                <span>Hedef: <b>₺2,500</b></span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 72%;"></div>
-              </div>
-            </div>
-
-            <div class="card-actions">
-              <button class="btn btn-outline" onclick="openModal('Duman (Mama)', 50)">₺50 Paket</button>
-              <button class="btn btn-primary" onclick="openModal('Duman (Aylık Mama)', 150)">Aylık Koruyucu Ol</button>
-            </div>
-          </div>
+      <!-- 2. SEKME: MARKET -->
+      <section id="tab-market" class="tab-content">
+        <div class="section-title">
+          <h3>Pati Market</h3>
+          <p>Doğrudan klinik ve barınak adresine gönderim yapın.</p>
         </div>
 
-        <!-- Kart 3 -->
-        <div class="card" data-category="acil">
-          <div class="card-image">
-            <span class="card-tag tag-urgent"><i class="fa-solid fa-stethoscope"></i> Klinik Felç Tedavisi</span>
-            <img src="https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?auto=format&fit=crop&w=600&q=80" alt="Gözde">
+        <div class="market-list">
+          <div class="market-item">
+            <i class="fa-solid fa-box-open market-icon"></i>
+            <div class="market-details">
+              <h5>15 KG Yetişkin Köpek Maması</h5>
+              <span>₺850</span>
+            </div>
+            <button class="btn btn-sm btn-accent" onclick="openModal('15 KG Mama', 850)">Gönder</button>
           </div>
-          <div class="card-body">
-            <h3>Gözde <span class="location"><i class="fa-solid fa-location-dot"></i> İzmir / Karşıyaka</span></h3>
-            <p>Gençlik hastalığı sonrası fizik tedavi süreci devam ediyor. Fizik tedavi seans masrafları için sponsor aranıyor.</p>
-            
-            <div class="progress-bar-container">
-              <div class="progress-info">
-                <span>Toplanan: <b>₺3,100</b></span>
-                <span>Hedef: <b>₺8,000</b></span>
-              </div>
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 38%;"></div>
-              </div>
-            </div>
 
-            <div class="card-actions">
-              <button class="btn btn-outline" onclick="openModal('Gözde (Fizik Tedavi)', 200)">₺200 Destek Ol</button>
-              <button class="btn btn-primary" onclick="openModal('Gözde (Koruyucu Aile)', 300)">Aylık Koruyucu Ol</button>
+          <div class="market-item">
+            <i class="fa-solid fa-prescription-bottle-medical market-icon"></i>
+            <div class="market-details">
+              <h5>Parazit Aşı Paketi (3 Doz)</h5>
+              <span>₺450</span>
             </div>
+            <button class="btn btn-sm btn-accent" onclick="openModal('Parazit Aşısı', 450)">Gönder</button>
+          </div>
+
+          <div class="market-item">
+            <i class="fa-solid fa-house-chimney-window market-icon"></i>
+            <div class="market-details">
+              <h5>Ahşap Yalıtımlı Kedi Yuvası</h5>
+              <span>₺1,200</span>
+            </div>
+            <button class="btn btn-sm btn-accent" onclick="openModal('Kedi Yuvası', 1200)">Gönder</button>
           </div>
         </div>
+      </section>
 
+      <!-- 3. SEKME: LİDERLİK -->
+      <section id="tab-liderler" class="tab-content">
+        <div class="section-title">
+          <h3>Süper Koruyucular</h3>
+          <p>Bu ay en çok cana umut olan destekçilerimiz.</p>
+        </div>
+
+        <div class="leaderboard-list">
+          <div class="leader-item rank-1">
+            <div class="rank-badge"><i class="fa-solid fa-trophy"></i> 1</div>
+            <div class="leader-info">
+              <strong>Zeynep K.</strong>
+              <small>Gold Koruyucu (14 Can)</small>
+            </div>
+            <span class="leader-amount">₺12,400</span>
+          </div>
+
+          <div class="leader-item rank-2">
+            <div class="rank-badge"><i class="fa-solid fa-medal"></i> 2</div>
+            <div class="leader-info">
+              <strong>Ahmet M.</strong>
+              <small>Silver Koruyucu (8 Can)</small>
+            </div>
+            <span class="leader-amount">₺8,150</span>
+          </div>
+
+          <div class="leader-item rank-3">
+            <div class="rank-badge"><i class="fa-solid fa-award"></i> 3</div>
+            <div class="leader-info">
+              <strong>Selin Y.</strong>
+              <small>Bronz Koruyucu (5 Can)</small>
+            </div>
+            <span class="leader-amount">₺5,300</span>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Mobil Alt Gezinme Menüsü (Bottom Navigation Bar) -->
+    <nav class="bottom-nav">
+      <button class="nav-item active" onclick="switchTab('tab-canlar', this)">
+        <i class="fa-solid fa-paw"></i>
+        <span>Canlar</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('tab-market', this)">
+        <i class="fa-solid fa-store"></i>
+        <span>Market</span>
+      </button>
+      <button class="nav-item" onclick="switchTab('tab-liderler', this)">
+        <i class="fa-solid fa-trophy"></i>
+        <span>Liderler</span>
+      </button>
+    </nav>
+
+    <!-- Mobil Bottom Sheet / Modal Ödeme Katmanı -->
+    <div id="payment-modal" class="modal-overlay">
+      <div class="bottom-sheet">
+        <div class="sheet-handle"></div>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+        <h3 id="modal-title">Destek İşlemi</h3>
+        <p class="modal-desc">Ödeme doğrudan ilgili kliniğe aktarılacaktır.</p>
+
+        <div class="form-group">
+          <label>Destek Tutarı (TL)</label>
+          <input type="number" id="base-amount" class="form-input" value="150" onchange="calculateTotal()">
+        </div>
+
+        <div class="tip-box">
+          <label class="checkbox-container">
+            <input type="checkbox" id="include-tip" checked onchange="calculateTotal()">
+            <span class="checkmark"></span>
+            <strong>PatiFon Desteği (%12)</strong>
+          </label>
+          <p class="tip-desc">Sunucu, yazılım ve saha doğrulama giderlerimiz içindir.</p>
+        </div>
+
+        <div class="total-summary">
+          <span>Toplam:</span>
+          <strong id="final-amount">₺168 TL</strong>
+        </div>
+
+        <button class="btn btn-primary btn-full" onclick="processPayment()">Güvenli Ödeme Yap</button>
       </div>
     </div>
-  </section>
 
-  <!-- Pati Market -->
-  <section id="market" class="section bg-light">
-    <div class="container">
-      <div class="section-header">
-        <h2>Pati Market – Doğrudan İhtiyaç Desteği</h2>
-        <p>Satın aldığınız ürünler platform komisyonu ile doğrudan anlaşmalı barınak ve klinik adreslerine kargolanır.</p>
-      </div>
-
-      <div class="market-grid">
-        <div class="market-card">
-          <i class="fa-solid fa-box-open market-icon"></i>
-          <h4>15 KG Yetişkin Köpek Maması</h4>
-          <span class="market-price">₺850</span>
-          <button class="btn btn-sm btn-accent" onclick="openModal('15 KG Köpek Maması', 850)">Barınağa Gönder</button>
-        </div>
-        <div class="market-card">
-          <i class="fa-solid fa-prescription-bottle-medical market-icon"></i>
-          <h4>Parazit Aşı Paketi (3 Doz)</h4>
-          <span class="market-price">₺450</span>
-          <button class="btn btn-sm btn-accent" onclick="openModal('Parazit Aşı Paketi', 450)">Kliniğe Gönder</button>
-        </div>
-        <div class="market-card">
-          <i class="fa-solid fa-house-chimney-window market-icon"></i>
-          <h4>Ahşap Yalıtımlı Kedi Yuvası</h4>
-          <span class="market-price">₺1,200</span>
-          <button class="btn btn-sm btn-accent" onclick="openModal('Ahşap Kedi Yuvası', 1200)">Sokağa Gönder</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Liderlik Sıralaması -->
-  <section id="liderler" class="section">
-    <div class="container">
-      <div class="section-header">
-        <h2>Ayın Süper Koruyucuları</h2>
-        <p>En çok cana umut olan şeffaf bağışçılarımız ve topluluk liderlerimiz.</p>
-      </div>
-
-      <div class="leaderboard">
-        <div class="leader-row rank-1">
-          <span class="rank"><i class="fa-solid fa-trophy"></i> 1</span>
-          <span class="name">Zeynep K.</span>
-          <span class="badge badge-gold">Gold Koruyucu (14 Can)</span>
-          <span class="amount">₺12,400</span>
-        </div>
-        <div class="leader-row rank-2">
-          <span class="rank"><i class="fa-solid fa-medal"></i> 2</span>
-          <span class="name">Ahmet M.</span>
-          <span class="badge badge-silver">Silver Koruyucu (8 Can)</span>
-          <span class="amount">₺8,150</span>
-        </div>
-        <div class="leader-row rank-3">
-          <span class="rank"><i class="fa-solid fa-award"></i> 3</span>
-          <span class="name">Selin Y.</span>
-          <span class="badge badge-bronze">Bronz Koruyucu (5 Can)</span>
-          <span class="amount">₺5,300</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer class="footer">
-    <div class="container footer-content">
-      <div class="footer-logo">
-        <i class="fa-solid fa-paw"></i> PatiFon
-        <p>Sokak hayvanları için teknoloji ve güven odaklı mikro-bağış ve koruyucu aile altyapısı.</p>
-      </div>
-      <div class="footer-copy">
-        &copy; 2026 PatiFon. Tüm hakları saklıdır.
-      </div>
-    </div>
-  </footer>
-
-  <!-- Destek & Bahşiş Modalı -->
-  <div id="payment-modal" class="modal-overlay">
-    <div class="modal-card">
-      <button class="modal-close" onclick="closeModal()">&times;</button>
-      <h3 id="modal-title">Destek İşlemi</h3>
-      <p class="modal-desc">Yaptığınız ödeme doğrudan fatura karşılığı ilgili kliniğe aktarılacaktır.</p>
-
-      <div class="form-group">
-        <label>Destek Tutarı (TL)</label>
-        <input type="number" id="base-amount" class="form-input" value="150" onchange="calculateTotal()">
-      </div>
-
-      <!-- GoFundMe Tarzı Opsiyonel Bahşiş Kurgusu -->
-      <div class="tip-box">
-        <label class="checkbox-container">
-          <input type="checkbox" id="include-tip" checked onchange="calculateTotal()">
-          <span class="checkmark"></span>
-          <strong>PatiFon Platform Desteği (%12)</strong>
-        </label>
-        <p class="tip-desc">Sunucu, yazılım ve saha doğrulama giderlerimiz için %12 opsiyonel platform bahşişi eklenir.</p>
-      </div>
-
-      <div class="total-summary">
-        <span>Toplam Ödenecek Tutar:</span>
-        <strong id="final-amount">₺168 TL</strong>
-      </div>
-
-      <button class="btn btn-primary btn-full" onclick="processPayment()">Güvenli Ödeme Yap</button>
-    </div>
   </div>
 
   <script src="script.js"></script>
