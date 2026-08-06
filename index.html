@@ -32,19 +32,8 @@
 </head>
 <body class="bg-gray-100 text-gray-800 font-sans antialiased selection:bg-brand-orange selection:text-white">
 
-    <!-- Splash Screen (8 Saniyelik Intro) -->
-    <div id="splash-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-700">
-        <video id="intro-video" class="w-full h-full object-cover" autoplay muted playsinline>
-            <source src="intro.mp4" type="video/mp4">
-            <div class="text-white text-center">
-                <h1 class="text-4xl font-bold text-brand-orange mb-2">PatiFon</h1>
-                <p>Yükleniyor...</p>
-            </div>
-        </video>
-    </div>
-
     <!-- Main Container (Mobil Uyumlu Çerçeve) -->
-    <div id="app" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col pb-20 hidden">
+    <div id="app" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col pb-20">
         
         <!-- Top Header -->
         <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
@@ -103,7 +92,7 @@
                 </p>
             </div>
 
-            <!-- KAYIT OL FORMU KARTI (SUPABASE ENTEGRELİ) -->
+            <!-- KAYIT OL FORMU KARTI -->
             <div id="auth-register-card" class="space-y-4 hidden">
                 <div class="text-center mb-4">
                     <h2 class="text-2xl font-bold text-gray-900">Aramıza Katılın</h2>
