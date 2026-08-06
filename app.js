@@ -9,52 +9,13 @@ let cart = [];
 let currentTab = 'home';
 let currentUserProfile = null;
 
-// --- SAYFA BAŞLATICI & SPLASH ---
+// --- SAYFA BAŞLATICI ---
 document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     initWheel();
 
-    const splash = document.getElementById('splash-screen');
-    const app = document.getElementById('app');
-    const introVideo = document.getElementById('intro-video');
-
-    let isAppShown = false;
-
-    // Uygulama ekranını açan güvenli fonksiyon
-    const showApp = () => {
-        if (isAppShown) return;
-        isAppShown = true;
-
-        splash.classList.add('opacity-0');
-        
-        setTimeout(() => {
-            splash.style.display = 'none';
-            app.classList.remove('hidden');
-
-            // Oturum durumuna göre görünürlük ayarı
-            if (!currentUserProfile) {
-                document.getElementById('view-auth').classList.remove('hidden');
-                document.getElementById('bottom-nav').classList.add('hidden');
-            } else {
-                switchTab('home');
-            }
-        }, 700);
-    };
-
-    if (introVideo) {
-        // Video bittiğinde çalıştır
-        introVideo.onended = showApp;
-
-        // Tarayıcı autoplay engeline takılırsa doğrudan geç
-        introVideo.play().catch(() => {
-            showApp();
-        });
-
-        // 4 saniyelik maksimum güvenlik zamanlayıcısı
-        setTimeout(showApp, 4000);
-    } else {
-        setTimeout(showApp, 1000);
-    }
+    // Uygulama açılışında direkt auth ekranını göster
+    document.getElementById('view-auth').classList.remove('hidden');
 
     renderFeed();
     renderStore();
