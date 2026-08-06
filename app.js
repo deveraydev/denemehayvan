@@ -14,22 +14,43 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     initWheel();
 
-    // Intro Video Bitişi veya Zamanlayıcı ile Geçiş
     const splash = document.getElementById('splash-screen');
     const app = document.getElementById('app');
     const introVideo = document.getElementById('intro-video');
 
+    let isAppShown = false;
+
+    // Uygulama ekranını açan güvenli fonksiyon
     const showApp = () => {
+        if (isAppShown) return;
+        isAppShown = true;
+
         splash.classList.add('opacity-0');
+        
         setTimeout(() => {
             splash.style.display = 'none';
             app.classList.remove('hidden');
+
+            // Oturum durumuna göre görünürlük ayarı
+            if (!currentUserProfile) {
+                document.getElementById('view-auth').classList.remove('hidden');
+                document.getElementById('bottom-nav').classList.add('hidden');
+            } else {
+                switchTab('home');
+            }
         }, 700);
     };
 
     if (introVideo) {
+        // Video bittiğinde çalıştır
         introVideo.onended = showApp;
-        // 4 saniye içinde video bitmezse otomatik aç
+
+        // Tarayıcı autoplay engeline takılırsa doğrudan geç
+        introVideo.play().catch(() => {
+            showApp();
+        });
+
+        // 4 saniyelik maksimum güvenlik zamanlayıcısı
         setTimeout(showApp, 4000);
     } else {
         setTimeout(showApp, 1000);
@@ -144,7 +165,7 @@ async function handleLogin(event) {
         if (authError) throw authError;
 
         // Kullanıcı Profilini Çek
-        const { data: profile, error: profileError } = await supabase
+        const { data: profile } = await supabase
             .from('profiles')
             .select('*')
             .eq('id', authData.user.id)
@@ -172,12 +193,18 @@ async function handleLogin(event) {
 async function handleLogout() {
     await supabase.auth.signOut();
     currentUserProfile = null;
+    
+    // Bottom nav gizle
     document.getElementById('bottom-nav').classList.add('hidden');
     
-    // Tüm view'ları gizle, auth view'ı aç
+    // Tüm sekmeleri gizle
     const views = ['view-home', 'view-petfon', 'view-detail', 'view-leaderboard', 'view-profile', 'view-admin'];
-    views.forEach(id => document.getElementById(id).classList.add('hidden'));
+    views.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.classList.add('hidden');
+    });
     
+    // Auth ekranını göster
     document.getElementById('view-auth').classList.remove('hidden');
     toggleAuthMode('login');
 }
