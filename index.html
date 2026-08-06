@@ -5,7 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PatiFon Mobile - Hayvan Destek & Pet Shop Platformu</title>
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com"></script> 
+    <!-- Supabase JS SDK -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const supabaseUrl = 'https://bzzmordwmlngbqrasuwr.supabase.co'
+  const supabaseAnonKey = 'sb_publishable_w44uuUXk_MT1bQ1IbK8Lzg_oDOTrF10'
+  
+  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey)
+</script>
     <script>
         tailwind.config = {
             theme: {
