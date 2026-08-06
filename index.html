@@ -4,250 +4,164 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PatiFon - Hayvan Destek Platformu</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            orange: '#FF7A00',
-                            cream: '#FFF9F5',
-                            green: '#2E7D32',
-                            brown: '#5D4037',
-                            softBg: '#F8F9FA'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Custom CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased overflow-hidden">
+<body>
 
-    <!-- Uygulama Çerçevesi (Mobil Görünüm) -->
-    <div id="app-container" class="max-w-md mx-auto bg-white h-[100dvh] relative flex flex-col shadow-2xl overflow-hidden">
+    <!-- Uygulama Konteyneri -->
+    <div class="app-container">
         
-        <!-- SPLASH EKRANI -->
-        <div id="splash-screen" class="absolute inset-0 z-50 bg-brand-cream flex flex-col items-center justify-center transition-opacity duration-1000">
-            <!-- Video intro.mp4 public klasöründe olmalı -->
-            <video id="splash-video" src="intro.mp4" class="w-full h-full object-cover absolute inset-0 opacity-50" autoplay muted playsinline></video>
-            <div class="z-10 text-center animate-pulse">
-                <div class="w-24 h-24 bg-brand-orange text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-xl">
-                    <i data-lucide="paw-print" class="w-12 h-12"></i>
-                </div>
-                <h1 class="text-4xl font-black text-gray-900 tracking-tighter">Pati<span class="text-brand-orange">Fon</span></h1>
-                <p class="text-sm font-semibold text-gray-600 mt-2">Canlara Umut Ol</p>
+        <!-- Üst Bilgi (Navbar) -->
+        <header class="navbar" id="main-navbar" style="display: none;">
+            <div class="logo">
+                <i class="fas fa-paw"></i> PatiFon
             </div>
-        </div>
-
-        <!-- AUTH EKRANI (Giriş / Kayıt) -->
-        <div id="view-auth" class="hidden absolute inset-0 z-40 bg-white flex flex-col justify-center p-6 overflow-y-auto no-scrollbar">
-            <!-- Giriş -->
-            <div id="login-section" class="space-y-6">
-                <div class="text-center">
-                    <h2 class="text-3xl font-black text-gray-900">Tekrar Merhaba!</h2>
-                    <p class="text-gray-500 mt-2 text-sm">Giriş yapın ve desteklemeye devam edin.</p>
-                </div>
-                <form id="login-form" class="space-y-4">
-                    <div>
-                        <input type="text" id="login-user" placeholder="Kullanıcı Adı (admin)" required class="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-orange transition">
-                    </div>
-                    <div>
-                        <input type="password" id="login-pass" placeholder="Şifre (admin)" required class="w-full px-4 py-4 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-orange transition">
-                    </div>
-                    <button type="submit" class="w-full py-4 bg-brand-orange text-white font-bold rounded-2xl shadow-lg shadow-brand-orange/30 active:scale-95 transition">Giriş Yap</button>
-                </form>
-                <div class="text-center mt-6">
-                    <p class="text-sm text-gray-500">Hesabınız yok mu? <button onclick="toggleAuth('register')" class="text-brand-orange font-bold">Kayıt Ol</button></p>
-                </div>
-            </div>
-
-            <!-- Kayıt -->
-            <div id="register-section" class="hidden space-y-6">
-                <div class="text-center">
-                    <h2 class="text-3xl font-black text-gray-900">Aramıza Katıl</h2>
-                    <p class="text-gray-500 mt-2 text-sm">Sokak hayvanları için büyük bir adım.</p>
-                </div>
-                <form id="register-form" class="space-y-4">
-                    <input type="text" placeholder="Ad Soyad" required class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
-                    <input type="email" placeholder="E-Posta" required class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
-                    <input type="password" placeholder="Şifre" required class="w-full px-4 py-3 rounded-2xl bg-gray-50 border border-gray-100 focus:outline-none focus:ring-2 focus:ring-brand-orange">
-                    <button type="button" onclick="toggleAuth('login')" class="w-full py-4 bg-brand-orange text-white font-bold rounded-2xl shadow-lg shadow-brand-orange/30 active:scale-95 transition">Kayıt İşlemini Tamamla</button>
-                </form>
-                <div class="text-center mt-6">
-                    <p class="text-sm text-gray-500">Zaten hesabın var mı? <button onclick="toggleAuth('login')" class="text-brand-orange font-bold">Giriş Yap</button></p>
-                </div>
-            </div>
-        </div>
-
-        <!-- ÜST HEADER (Sadece ana sayfalarda) -->
-        <header id="main-header" class="hidden sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-brand-orange flex items-center justify-center text-white font-bold text-lg"><i data-lucide="paw-print" class="w-5 h-5"></i></div>
-                <span class="font-black text-xl tracking-tight text-gray-900">Pati<span class="text-brand-orange">Fon</span></span>
-            </div>
-            <div class="flex gap-3">
-                <button onclick="openCart()" class="relative text-gray-600 hover:text-brand-orange transition">
-                    <i data-lucide="shopping-cart"></i>
-                    <span id="cart-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center hidden">0</span>
-                </button>
+            <div class="cart-icon" onclick="openPaymentModal(0, 'cart')">
+                <i class="fas fa-shopping-cart"></i>
+                <span id="cart-count">0</span>
             </div>
         </header>
 
-        <!-- ANA İÇERİK ALANI -->
-        <main id="main-content" class="hidden flex-1 overflow-y-auto no-scrollbar pb-24 bg-gray-50">
-            
-            <!-- HOME TAB -->
-            <section id="tab-home" class="p-4 space-y-6">
-                <!-- İçerik JS ile doldurulacak -->
-            </section>
-
-            <!-- PETFON TAB (Mağaza) -->
-            <section id="tab-petfon" class="hidden p-4 space-y-4">
-                <div class="flex items-center justify-between">
-                    <h2 class="text-xl font-black text-gray-900">PetFon Mağaza</h2>
-                    <span class="text-xs bg-brand-orange/10 text-brand-orange px-3 py-1 rounded-full font-bold">Bağışa Katkı</span>
+        <!-- 1. GİRİŞ EKRANI -->
+        <div id="view-login" class="view active">
+            <div class="login-container">
+                <div class="login-logo">
+                    <i class="fas fa-paw"></i>
                 </div>
-                <div id="store-grid" class="grid grid-cols-2 gap-4">
-                    <!-- İçerik JS ile doldurulacak -->
+                <h2>Tekrar Merhaba!</h2>
+                <p>Giriş yapın ve desteklemeye devam edin.</p>
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Kullanıcı Adı (admin)">
                 </div>
-            </section>
-
-            <!-- LEADERBOARD TAB -->
-            <section id="tab-leaderboard" class="hidden p-4 space-y-4">
-                <h2 class="text-xl font-black text-gray-900">Top 10 Bağışçı</h2>
-                <div id="leaderboard-list" class="space-y-3">
-                    <!-- İçerik JS ile doldurulacak -->
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Şifre (admin)">
                 </div>
-            </section>
-
-            <!-- PROFILE TAB -->
-            <section id="tab-profile" class="hidden p-4 space-y-6">
-                <div class="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 flex items-center gap-4">
-                    <img src="https://i.pravatar.cc/150?img=32" class="w-20 h-20 rounded-full object-cover ring-4 ring-brand-orange/20">
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-900">Irmak Günay</h3>
-                        <p class="text-sm text-gray-500">Premium Destekçi</p>
-                        <p class="text-brand-orange font-bold text-sm mt-1">Toplam Destek: <span id="user-total-donation">₺4500</span></p>
-                    </div>
-                </div>
-
-                <!-- Çark Sistemi (Sadece >= 3000 TL için aktif) -->
-                <div id="wheel-section" class="bg-gradient-to-br from-orange-50 to-amber-50 rounded-3xl p-6 border border-orange-100 text-center relative overflow-hidden">
-                    <h4 class="font-bold text-lg text-gray-800 mb-2">Pati Çarkı</h4>
-                    <p class="text-xs text-gray-600 mb-6">3000 TL üzeri destekçilerimiz 72 saatte bir sokak hayvanları için çark çevirebilir!</p>
-                    
-                    <div class="relative w-48 h-48 mx-auto mb-6">
-                        <!-- Çark Canvas -->
-                        <canvas id="wheel-canvas" width="200" height="200" class="transform transition-transform duration-[4000ms] ease-out rounded-full shadow-xl"></canvas>
-                        <!-- Çark Ok -->
-                        <div class="absolute -top-2 left-1/2 -translate-x-1/2 text-red-500 z-10 drop-shadow-md">
-                            <i data-lucide="map-pin" class="w-8 h-8 rotate-180 fill-red-500"></i>
-                        </div>
-                    </div>
-                    <button id="btn-spin" onclick="spinWheel()" class="py-3 px-8 bg-brand-orange text-white font-bold rounded-full shadow-lg hover:scale-105 transition">Çarkı Çevir</button>
-                    <p id="wheel-timer" class="text-xs font-bold text-brand-orange mt-3 hidden">Sonraki hak: <span id="timer-text">72:00:00</span></p>
-                </div>
-
-                <button onclick="logout()" class="w-full py-4 bg-red-50 text-red-600 font-bold rounded-2xl hover:bg-red-100 transition">Çıkış Yap</button>
-            </section>
-        </main>
-
-        <!-- ALT NAVİGASYON -->
-        <nav id="bottom-nav" class="hidden absolute bottom-0 w-full bg-white/90 backdrop-blur-xl border-t border-gray-100 pb-safe z-30">
-            <div class="flex justify-around items-center h-16">
-                <button onclick="navTo('home')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-brand-orange" data-target="home">
-                    <i data-lucide="home" class="w-6 h-6 mb-1"></i>
-                    <span class="text-[10px] font-semibold">Ana Sayfa</span>
-                </button>
-                <button onclick="navTo('petfon')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-brand-orange transition" data-target="petfon">
-                    <i data-lucide="shopping-bag" class="w-6 h-6 mb-1"></i>
-                    <span class="text-[10px] font-semibold">PetFon</span>
-                </button>
-                <button onclick="navTo('leaderboard')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-brand-orange transition" data-target="leaderboard">
-                    <i data-lucide="trophy" class="w-6 h-6 mb-1"></i>
-                    <span class="text-[10px] font-semibold">Liderlik</span>
-                </button>
-                <button onclick="navTo('profile')" class="nav-btn flex flex-col items-center justify-center w-full h-full text-gray-400 hover:text-brand-orange transition" data-target="profile">
-                    <i data-lucide="user" class="w-6 h-6 mb-1"></i>
-                    <span class="text-[10px] font-semibold">Profil</span>
-                </button>
+                <button class="btn btn-primary btn-block" onclick="login()">Giriş Yap</button>
+                <p class="register-text">Hesabınız yok mu? <a href="#">Kayıt Ol</a></p>
             </div>
-        </nav>
+        </div>
 
-        <!-- MODALS -->
-        <!-- Bağış Akışı Modalı -->
-        <div id="donation-modal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center hidden opacity-0 transition-opacity">
-            <div class="bg-white w-full h-[80%] rounded-t-3xl p-6 flex flex-col transform translate-y-full transition-transform duration-300" id="donation-sheet">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black text-gray-900">Tedaviye Destek Ol</h3>
-                    <button onclick="closeDonation()" class="p-2 bg-gray-100 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+        <!-- 2. ANA SAYFA (Hayvanlar Listesi) -->
+        <div id="view-home" class="view">
+            <div class="page-title">Can Dostlarımız</div>
+            <div id="animal-list" class="card-list">
+                <!-- JS ile Doldurulacak -->
+            </div>
+        </div>
+
+        <!-- 2.1 HAYVAN DETAY EKRANI -->
+        <div id="view-animal-detail" class="view">
+            <button class="btn-back" onclick="navigate('view-home')"><i class="fas fa-arrow-left"></i> Geri</button>
+            <div id="animal-detail-content">
+                <!-- JS ile Doldurulacak -->
+            </div>
+        </div>
+
+        <!-- 3. PETFON MAĞAZA -->
+        <div id="view-shop" class="view">
+            <div class="page-title">PetFon Mağaza</div>
+            <div class="shop-info">Buradan aldığınız ürünler doğrudan ihtiyaç sahibi canlara ulaşır.</div>
+            <div id="product-list" class="shop-grid">
+                <!-- JS ile Doldurulacak -->
+            </div>
+        </div>
+
+        <!-- 4. PROFİL & ÇARK & DESTEK KARTI -->
+        <div id="view-profile" class="view">
+            <div class="profile-header">
+                <img src="https://i.pravatar.cc/150?img=47" alt="Irmak Günay" class="profile-img">
+                <h3>Irmak Günay</h3>
+                <span class="badge">Premium Destekçi</span>
+                <div class="total-support-text">Toplam Destek: ₺4500</div>
+                <button class="btn btn-outline mt-10" onclick="showSupportCard()"><i class="fas fa-heart"></i> Destek Kartını Gör</button>
+            </div>
+
+            <div class="wheel-section">
+                <h4>Pati Çarkı</h4>
+                <p>3000 TL üzeri destekçilerimiz 72 saatte bir minik dostlarımız için çark çevirebilir!</p>
+                
+                <div class="wheel-container">
+                    <div class="wheel-pointer"><i class="fas fa-map-marker-alt"></i></div>
+                    <div class="wheel" id="wheel">
+                        <div class="wheel-slice slice-1"><span>1 Kutu Yaş Mama</span></div>
+                        <div class="wheel-slice slice-2"><span>İç/Dış Parazit</span></div>
+                        <div class="wheel-slice slice-3"><span>150gr Kuru Mama</span></div>
+                        <div class="wheel-slice slice-4"><span>Ödül Maması</span></div>
+                        <div class="wheel-slice slice-5"><span>100gr Yaş Mama</span></div>
+                        <div class="wheel-slice slice-6"><span>Sürpriz Oyuncak</span></div>
+                    </div>
+                </div>
+                <button class="btn btn-primary btn-block mt-20" id="spin-btn" onclick="spinWheel()">Çarkı Çevir</button>
+                <div id="wheel-result" class="wheel-result-text"></div>
+            </div>
+
+            <button class="btn btn-danger btn-block mt-20" onclick="logout()">Çıkış Yap</button>
+        </div>
+
+        <!-- DESTEK KARTI MODAL -->
+        <div id="support-card-modal" class="modal">
+            <div class="modal-content support-card-content">
+                <span class="close-btn" onclick="closeModal('support-card-modal')">&times;</span>
+                <div class="shareable-card" id="shareable-card">
+                    <div class="card-logo"><i class="fas fa-paw"></i> PatiFon</div>
+                    <img src="https://i.pravatar.cc/150?img=47" alt="Profil">
+                    <h2>Teşekkürler, Irmak Günay!</h2>
+                    <p class="emotional-text">
+                        Siz sadece bir destekçi değil, sokaktaki sessiz dostlarımızın kahramanısınız. 
+                        Bugüne kadar sağladığınız <strong>₺4500</strong> destek ile onların mamasına, tedavisine ve sıcacık yuvalarına umut oldunuz. 
+                        Her pati izinde sizin sevginiz var. İyi ki varsınız! 🐾
+                    </p>
+                    <div class="card-footer">#PatiFon #SensizOlmaz</div>
+                </div>
+                <button class="btn btn-primary btn-block mt-20"><i class="fas fa-share-alt"></i> Sosyal Medyada Paylaş</button>
+            </div>
+        </div>
+
+        <!-- ÖDEME / DESTEK MODAL (%15 Hizmet Bedelli) -->
+        <div id="payment-modal" class="modal">
+            <div class="modal-content">
+                <span class="close-btn" onclick="closeModal('payment-modal')">&times;</span>
+                <h3>Destek Özeti</h3>
+                <div class="payment-details">
+                    <div class="flex-row">
+                        <span>Ara Toplam:</span>
+                        <span id="payment-subtotal">₺0</span>
+                    </div>
+                    <div class="flex-row fee-row">
+                        <span>PatiFon Hizmet Bedeli (%15):</span>
+                        <span id="payment-fee">₺0</span>
+                    </div>
+                    <hr>
+                    <div class="flex-row total-row">
+                        <span>Ödenecek Tutar:</span>
+                        <span id="payment-total">₺0</span>
+                    </div>
                 </div>
                 
-                <div class="flex-1 overflow-y-auto no-scrollbar space-y-6">
-                    <div class="bg-brand-orange/10 p-4 rounded-2xl flex items-center gap-4">
-                        <div class="w-16 h-16 bg-white rounded-xl shadow-sm p-2 flex items-center justify-center">
-                            <i data-lucide="heart-handshake" class="w-8 h-8 text-brand-orange"></i>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900" id="donate-animal-name">Luna</h4>
-                            <p class="text-xs text-gray-600">Ortopedik Ameliyat Desteği</p>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label class="font-bold text-sm text-gray-700">Bağış Miktarı (₺)</label>
-                        <input type="number" id="donate-amount" oninput="calculateFee()" placeholder="1000" class="w-full text-3xl font-black px-4 py-4 mt-2 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:border-brand-orange">
-                    </div>
-
-                    <div class="bg-gray-50 p-4 rounded-2xl space-y-2 text-sm border border-gray-100">
-                        <div class="flex justify-between text-gray-600"><span>Bağış Tutarı:</span> <span id="summary-base" class="font-bold">₺0</span></div>
-                        <div class="flex justify-between text-gray-600"><span>Hizmet Bedeli (%12):</span> <span id="summary-fee" class="font-bold">₺0</span></div>
-                        <hr class="border-gray-200">
-                        <div class="flex justify-between text-gray-900 font-black text-lg"><span>Toplam:</span> <span id="summary-total" class="text-brand-orange">₺0</span></div>
-                    </div>
-
-                    <label class="flex items-start gap-3 p-3 border border-gray-200 rounded-xl cursor-pointer hover:bg-gray-50">
-                        <input type="checkbox" id="fee-consent" onchange="toggleDonationBtn()" class="mt-1 w-5 h-5 accent-brand-orange">
-                        <span class="text-xs text-gray-600 leading-relaxed">PatiFon'un %12 hizmet kesintisini ve şeffaflık ilkelerini kabul ediyorum. Bu kesinti platform giderleri için kullanılmaktadır.</span>
-                    </label>
+                <div class="custom-amount-group" id="custom-amount-group">
+                    <label>Miktar Giriniz (₺):</label>
+                    <input type="number" id="custom-amount" oninput="calculateTotal()" placeholder="Örn: 100">
                 </div>
 
-                <div class="pt-4 mt-auto">
-                    <button id="btn-submit-donate" disabled onclick="processDonation()" class="w-full py-4 bg-gray-300 text-white font-bold rounded-2xl transition duration-300 cursor-not-allowed">Ödeme Adımına Geç</button>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="fee-consent" onchange="togglePayButton()">
+                    <label for="fee-consent">%15 PatiFon Hizmet Bedeli kesintisini onaylıyorum.</label>
                 </div>
+                
+                <button class="btn btn-primary btn-block" id="pay-btn" disabled onclick="completePayment()">Güvenli Ödeme Yap</button>
             </div>
         </div>
 
-        <!-- Sepet Modalı -->
-        <div id="cart-modal" class="fixed inset-0 bg-black/50 z-50 flex items-end justify-center hidden opacity-0 transition-opacity">
-            <div class="bg-white w-full h-[70%] rounded-t-3xl p-6 flex flex-col transform translate-y-full transition-transform duration-300" id="cart-sheet">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-xl font-black text-gray-900">Sepetim</h3>
-                    <button onclick="closeCart()" class="p-2 bg-gray-100 rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
-                </div>
-                <div id="cart-items" class="flex-1 overflow-y-auto space-y-3">
-                    <!-- Sepet ürünleri JS ile gelecek -->
-                </div>
-                <div class="pt-4 border-t border-gray-100">
-                    <div class="flex justify-between font-black text-lg mb-4">
-                        <span>Ara Toplam:</span>
-                        <span id="cart-total" class="text-brand-orange">₺0</span>
-                    </div>
-                    <button onclick="checkout()" class="w-full py-4 bg-brand-orange text-white font-bold rounded-2xl shadow-lg shadow-brand-orange/30">Bağış Olarak Satın Al</button>
-                </div>
-            </div>
-        </div>
+        <!-- Alt Navigasyon (Giriş yapıldıktan sonra görünür) -->
+        <nav class="bottom-nav" id="bottom-nav" style="display: none;">
+            <a href="#" class="nav-item active" onclick="navigate('view-home', this)"><i class="fas fa-home"></i><span>Ana Sayfa</span></a>
+            <a href="#" class="nav-item" onclick="navigate('view-shop', this)"><i class="fas fa-shopping-bag"></i><span>PetFon</span></a>
+            <a href="#" class="nav-item" onclick="navigate('view-profile', this)"><i class="fas fa-user"></i><span>Profil</span></a>
+        </nav>
 
     </div>
 
-    <!-- Application Logic -->
     <script src="app.js"></script>
 </body>
 </html>
