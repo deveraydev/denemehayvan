@@ -4,17 +4,17 @@ const SUPABASE_ANON_KEY = 'sb_publishable_w44uuUXk_MT1bQ1IbK8Lzg_oDOTrF10';
 
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-// Uygulama Durum Yönetimi
 let cart = [];
 let currentTab = 'home';
 let currentUserProfile = null;
 
 // --- SAYFA BAŞLATICI ---
 document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
-    initWheel();
+    if (window.lucide) {
+        lucide.createIcons();
+    }
 
-    // Sayfa açıldığında giriş ekranını görünür kıl
+    // Doğrudan Auth Ekranını Aç
     const authView = document.getElementById('view-auth');
     if (authView) authView.classList.remove('hidden');
 
@@ -23,8 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderLeaderboard();
 });
 
-// --- AUTH (GİRİŞ / KAYIT) İŞLEMLERİ ---
-
+// --- EKRAN GEÇİŞİ (GİRİŞ / KAYIT) ---
 function toggleAuthMode(mode) {
     const loginCard = document.getElementById('auth-login-card');
     const registerCard = document.getElementById('auth-register-card');
@@ -38,7 +37,7 @@ function toggleAuthMode(mode) {
     }
 }
 
-// KAYIT OL (Supabase Auth + Storage + Profiles Tablosu)
+// KAYIT OL
 async function handleRegister(event) {
     event.preventDefault();
     const btn = document.getElementById('btn-register');
@@ -51,14 +50,13 @@ async function handleRegister(event) {
     const district = document.getElementById('reg-district').value;
     const tcNo = document.getElementById('reg-tc').value;
     const phone = document.getElementById('reg-phone').value;
-    const avatarFileInput = document.getElementById('reg-avatar');
-    const avatarFile = avatarFileInput ? avatarFileInput.files[0] : null;
+    const avatarInput = document.getElementById('reg-avatar');
+    const avatarFile = avatarInput && avatarInput.files ? avatarInput.files[0] : null;
 
     try {
         btn.disabled = true;
         btn.innerText = 'Kayıt Yapılıyor...';
 
-        // 1. Supabase Auth Kaydı
         const { data: authData, error: authError } = await supabase.auth.signUp({
             email: email,
             password: password
@@ -68,7 +66,6 @@ async function handleRegister(event) {
         const user = authData.user;
         let avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
 
-        // 2. Profil Resmi Yükleme (Avatars Bucket)
         if (avatarFile && user) {
             const fileExt = avatarFile.name.split('.').pop();
             const fileName = `${user.id}-${Date.now()}.${fileExt}`;
@@ -83,7 +80,6 @@ async function handleRegister(event) {
             }
         }
 
-        // 3. Profiles Tablosuna Veri Ekleme
         if (user) {
             const { error: profileError } = await supabase.from('profiles').insert([{
                 id: user.id,
@@ -99,7 +95,7 @@ async function handleRegister(event) {
             if (profileError) throw profileError;
         }
 
-        alert('Kayıt başarıyla tamamlandı! Giriş yapabilirsiniz.');
+        alert('Kayıt başarılı! Giriş yapabilirsiniz.');
         document.getElementById('register-form').reset();
         toggleAuthMode('login');
 
@@ -129,7 +125,6 @@ async function handleLogin(event) {
 
         if (authError) throw authError;
 
-        // Kullanıcı Profilini Çek
         const { data: profile } = await supabase
             .from('profiles')
             .select('*')
@@ -141,7 +136,6 @@ async function handleLogin(event) {
             updateProfileUI(profile, authData.user.email);
         }
 
-        // Ana Akışa Yönlendir
         document.getElementById('view-auth').classList.add('hidden');
         document.getElementById('bottom-nav').classList.remove('hidden');
         switchTab('home');
@@ -159,24 +153,18 @@ async function handleLogout() {
     await supabase.auth.signOut();
     currentUserProfile = null;
     
-    // Bottom nav gizle
-    const bottomNav = document.getElementById('bottom-nav');
-    if (bottomNav) bottomNav.classList.add('hidden');
+    document.getElementById('bottom-nav').classList.add('hidden');
     
-    // Tüm sekmeleri gizle
-    const views = ['view-home', 'view-petfon', 'view-detail', 'view-leaderboard', 'view-profile', 'view-admin'];
+    const views = ['view-home', 'view-petfon', 'view-leaderboard', 'view-profile', 'view-admin'];
     views.forEach(id => {
         const el = document.getElementById(id);
         if (el) el.classList.add('hidden');
     });
     
-    // Auth ekranını göster
-    const authView = document.getElementById('view-auth');
-    if (authView) authView.classList.remove('hidden');
+    document.getElementById('view-auth').classList.remove('hidden');
     toggleAuthMode('login');
 }
 
-// PROFİL BİLGİLERİNİ EKRANA DOLDURMA
 function updateProfileUI(profile, email) {
     if (!profile) return;
     const imgEl = document.getElementById('profile-img');
@@ -186,22 +174,12 @@ function updateProfileUI(profile, email) {
     if (imgEl) imgEl.src = profile.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
     if (nameEl) nameEl.innerText = profile.full_name || 'Kullanıcı';
     if (emailEl) emailEl.innerText = email;
-    
-    const uName = document.getElementById('info-username');
-    const tc = document.getElementById('info-tc');
-    const phone = document.getElementById('info-phone');
-    const loc = document.getElementById('info-location');
-
-    if (uName) uName.innerText = profile.username || '-';
-    if (tc) tc.innerText = profile.tc_no || '-';
-    if (phone) phone.innerText = profile.phone || '-';
-    if (loc) loc.innerText = `${profile.district || ''} / ${profile.city || ''}`;
 }
 
-// --- TAB SEÇİMİ VE SAYFA GEÇİŞLERİ ---
+// TAB SEÇİMİ
 function switchTab(tab) {
     currentTab = tab;
-    const views = ['home', 'petfon', 'detail', 'leaderboard', 'profile', 'admin'];
+    const views = ['home', 'petfon', 'leaderboard', 'profile', 'admin'];
     views.forEach(v => {
         const el = document.getElementById(`view-${v}`);
         if (el) el.classList.add('hidden');
@@ -210,7 +188,6 @@ function switchTab(tab) {
     const activeView = document.getElementById(`view-${tab}`);
     if (activeView) activeView.classList.remove('hidden');
 
-    // Bottom nav aktifliği güncelleme (Güvenli Kontrol)
     document.querySelectorAll('.nav-item').forEach(nav => {
         nav.classList.remove('text-brand-orange');
         nav.classList.add('text-gray-400');
@@ -223,198 +200,42 @@ function switchTab(tab) {
     }
 }
 
-// --- VERİ DOLDURMA (MOCK FEED & STORE) ---
-const animalsData = [
-    { id: 1, name: 'Luna', category: 'Acil', shelter: 'İzmir Dostlar Barınağı', urgency: 'Kritik Ameliyat', target: 5000, raised: 3250, image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500' },
-    { id: 2, name: 'Maviş', category: 'Kedi', shelter: 'Alsancak Pati Evi', urgency: 'Kan Tedavisi', target: 2000, raised: 1800, image: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500' }
-];
-
-const storeProducts = [
-    { id: 101, name: 'Pro-Plan Yetişkin Kedi Maması 3kg', category: 'mama', price: 450, image: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300' },
-    { id: 102, name: 'Ortopedik Köpek Yatağı (L)', category: 'barinma', price: 620, image: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=300' }
-];
-
+// MOCK DATA RENDER
 function renderFeed() {
     const container = document.getElementById('animal-feed-list');
     if (!container) return;
-    container.innerHTML = animalsData.map(item => `
-        <div class="bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm">
-            <img src="${item.image}" class="w-full h-48 object-cover">
-            <div class="p-4 space-y-2">
-                <div class="flex justify-between items-center">
-                    <h3 class="font-bold text-gray-900">${item.name}</h3>
-                    <span class="text-[10px] bg-red-100 text-red-600 px-2 py-0.5 rounded-full font-bold">${item.urgency}</span>
-                </div>
-                <p class="text-xs text-gray-500">${item.shelter}</p>
-                <div class="w-full bg-gray-100 rounded-full h-2">
-                    <div class="bg-brand-orange h-2 rounded-full" style="width: ${(item.raised/item.target)*100}%"></div>
-                </div>
-                <div class="flex justify-between text-xs font-bold pt-1">
-                    <span class="text-gray-400">Toplanan: ₺${item.raised}</span>
-                    <span class="text-brand-orange">Hedef: ₺${item.target}</span>
-                </div>
-                <button onclick="openDonationModal()" class="w-full py-2.5 bg-brand-orange text-white text-xs font-bold rounded-xl mt-2">Destek Ol</button>
-            </div>
+    container.innerHTML = `
+        <div class="bg-white border border-gray-100 rounded-2xl p-4 shadow-sm">
+            <h3 class="font-bold">Luna - Tedavi Desteği</h3>
+            <p class="text-xs text-gray-500">İzmir Dostlar Barınağı</p>
+            <button onclick="openDonationModal()" class="w-full py-2 bg-brand-orange text-white text-xs font-bold rounded-xl mt-2">Destek Ol</button>
         </div>
-    `).join('');
+    `;
 }
 
 function renderStore() {
     const container = document.getElementById('store-products-list');
     if (!container) return;
-    container.innerHTML = storeProducts.map(prod => `
-        <div class="bg-white border border-gray-100 rounded-2xl p-3 shadow-sm flex flex-col justify-between">
-            <img src="${prod.image}" class="w-full h-28 object-cover rounded-xl mb-2">
-            <div>
-                <h4 class="font-bold text-xs text-gray-800 line-clamp-1">${prod.name}</h4>
-                <p class="text-brand-orange font-black text-sm mt-1">₺${prod.price}</p>
-            </div>
-            <button onclick="addToCart(${prod.id})" class="w-full py-2 bg-amber-50 text-brand-orange font-bold text-xs rounded-xl border border-orange-100 mt-2 hover:bg-brand-orange hover:text-white transition">Sepete Ekle</button>
+    container.innerHTML = `
+        <div class="bg-white border p-3 rounded-xl text-xs">
+            <p class="font-bold">Kedi Maması 3kg</p>
+            <p class="text-brand-orange font-bold">₺450</p>
         </div>
-    `).join('');
+    `;
 }
 
 function renderLeaderboard() {
     const container = document.getElementById('global-leaderboard-list');
     if (!container) return;
-    const leaders = [
-        { rank: 1, name: 'Irmak Günay', total: '₺4,250' },
-        { rank: 2, name: 'Ahmet Yılmaz', total: '₺3,800' },
-        { rank: 3, name: 'Selin Kaya', total: '₺3,100' }
-    ];
-    container.innerHTML = leaders.map(l => `
-        <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl text-xs">
-            <div class="flex items-center gap-3">
-                <span class="font-black text-brand-orange w-4">#${l.rank}</span>
-                <span class="font-bold text-gray-800">${l.name}</span>
-            </div>
-            <span class="font-bold text-brand-green">${l.total}</span>
+    container.innerHTML = `
+        <div class="p-3 bg-white border rounded-xl text-xs flex justify-between">
+            <span>1. Irmak Günay</span>
+            <span class="font-bold text-brand-green">₺4,250</span>
         </div>
-    `).join('');
+    `;
 }
 
-// --- SEPET VE BAĞIŞ MODAL İŞLEMLERİ ---
-function openCartModal() { 
-    const el = document.getElementById('cart-modal');
-    if (el) el.classList.remove('hidden'); 
-}
-function closeCartModal() { 
-    const el = document.getElementById('cart-modal');
-    if (el) el.classList.add('hidden'); 
-}
-
-function openDonationModal() { 
-    const el = document.getElementById('donation-modal');
-    if (el) el.classList.remove('hidden'); 
-}
-function closeDonationModal() { 
-    const el = document.getElementById('donation-modal');
-    if (el) el.classList.add('hidden'); 
-}
-
-function calculateFee() {
-    const amt = parseFloat(document.getElementById('donation-amount').value) || 0;
-    const fee = amt * 0.12;
-    document.getElementById('base-amount').innerText = `₺${amt}`;
-    document.getElementById('fee-amount').innerText = `₺${fee.toFixed(0)}`;
-    document.getElementById('total-amount').innerText = `₺${(amt + fee).toFixed(0)}`;
-}
-
-function toggleDonationSubmit() {
-    const cb = document.getElementById('fee-checkbox');
-    const btn = document.getElementById('btn-submit-donation');
-    if (!cb || !btn) return;
-    btn.disabled = !cb.checked;
-    if (cb.checked) {
-        btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
-        btn.classList.add('bg-brand-orange', 'hover:bg-orange-600');
-    } else {
-        btn.classList.add('bg-gray-300', 'cursor-not-allowed');
-        btn.classList.remove('bg-brand-orange', 'hover:bg-orange-600');
-    }
-}
-
-function processPayment() {
-    alert('Bağışınız için teşekkür ederiz! Destek kaydedildi.');
-    closeDonationModal();
-}
-
-function addToCart(id) {
-    const prod = storeProducts.find(p => p.id === id);
-    if (prod) {
-        cart.push(prod);
-        const badge = document.getElementById('cart-badge');
-        if (badge) {
-            badge.innerText = cart.length;
-            badge.classList.remove('hidden');
-        }
-        renderCartItems();
-    }
-}
-
-function renderCartItems() {
-    const container = document.getElementById('cart-items-container');
-    const totalPriceEl = document.getElementById('cart-total-price');
-    if (!container || !totalPriceEl) return;
-    
-    let total = 0;
-    container.innerHTML = cart.map(item => {
-        total += item.price;
-        return `
-            <div class="flex items-center justify-between p-2 bg-gray-50 rounded-xl text-xs">
-                <span>${item.name}</span>
-                <span class="font-bold text-brand-orange">₺${item.price}</span>
-            </div>
-        `;
-    }).join('');
-    totalPriceEl.innerText = `₺${total}`;
-}
-
-function checkoutCart() {
-    if (cart.length === 0) return alert('Sepetiniz boş!');
-    alert('Siparişiniz alındı. Kâr sokak canlarına aktarıldı!');
-    cart = [];
-    const badge = document.getElementById('cart-badge');
-    if (badge) badge.classList.add('hidden');
-    renderCartItems();
-    closeCartModal();
-}
-
-// --- PATİ ÇARKI (CANVAS) ---
-function initWheel() {
-    const canvas = document.getElementById('wheel-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const colors = ['#FF7A00', '#FFB703', '#2E7D32', '#5D4037', '#FB8500', '#023047'];
-    const prizes = ['1 Paket Mama', '%10 İndirim', 'Pati Rozeti', 'Mama Kabı', 'Teşekkür Kartı', 'Sürpriz Hediye'];
-
-    let startAngle = 0;
-    const arc = Math.PI / (prizes.length / 2);
-
-    for (let i = 0; i < prizes.length; i++) {
-        const angle = startAngle + i * arc;
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.beginPath();
-        ctx.arc(128, 128, 128, angle, angle + arc, false);
-        ctx.lineTo(128, 128);
-        ctx.fill();
-
-        ctx.save();
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 10px sans-serif';
-        ctx.translate(128 + Math.cos(angle + arc / 2) * 80, 128 + Math.sin(angle + arc / 2) * 80);
-        ctx.rotate(angle + arc / 2 + Math.PI / 2);
-        ctx.fillText(prizes[i], -ctx.measureText(prizes[i]).width / 2, 0);
-        ctx.restore();
-    }
-}
-
-function spinWheel() {
-    const canvas = document.getElementById('wheel-canvas');
-    if (!canvas) return;
-    const deg = Math.floor(2000 + Math.random() * 2000);
-    canvas.style.transform = `rotate(${deg}deg)`;
-    setTimeout(() => {
-        alert('Tebrikler! Sokak canlılarımız için hediye kazandınız!');
-    }, 4000);
-}
+function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
+function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+function openDonationModal() { document.getElementById('donation-modal').classList.remove('hidden'); }
+function closeDonationModal() { document.getElementById('donation-modal').classList.add('hidden'); }
