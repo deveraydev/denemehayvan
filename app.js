@@ -14,8 +14,9 @@ document.addEventListener('DOMContentLoaded', () => {
     lucide.createIcons();
     initWheel();
 
-    // Uygulama açılışında direkt auth ekranını göster
-    document.getElementById('view-auth').classList.remove('hidden');
+    // Sayfa açıldığında giriş ekranını görünür kıl
+    const authView = document.getElementById('view-auth');
+    if (authView) authView.classList.remove('hidden');
 
     renderFeed();
     renderStore();
@@ -29,11 +30,11 @@ function toggleAuthMode(mode) {
     const registerCard = document.getElementById('auth-register-card');
 
     if (mode === 'register') {
-        loginCard.classList.add('hidden');
-        registerCard.classList.remove('hidden');
+        if (loginCard) loginCard.classList.add('hidden');
+        if (registerCard) registerCard.classList.remove('hidden');
     } else {
-        registerCard.classList.add('hidden');
-        loginCard.classList.remove('hidden');
+        if (registerCard) registerCard.classList.add('hidden');
+        if (loginCard) loginCard.classList.remove('hidden');
     }
 }
 
@@ -50,7 +51,8 @@ async function handleRegister(event) {
     const district = document.getElementById('reg-district').value;
     const tcNo = document.getElementById('reg-tc').value;
     const phone = document.getElementById('reg-phone').value;
-    const avatarFile = document.getElementById('reg-avatar').files[0];
+    const avatarFileInput = document.getElementById('reg-avatar');
+    const avatarFile = avatarFileInput ? avatarFileInput.files[0] : null;
 
     try {
         btn.disabled = true;
@@ -82,18 +84,20 @@ async function handleRegister(event) {
         }
 
         // 3. Profiles Tablosuna Veri Ekleme
-        const { error: profileError } = await supabase.from('profiles').insert([{
-            id: user.id,
-            username: username,
-            full_name: fullName,
-            city: city,
-            district: district,
-            tc_no: tcNo,
-            phone: phone,
-            avatar_url: avatarUrl
-        }]);
+        if (user) {
+            const { error: profileError } = await supabase.from('profiles').insert([{
+                id: user.id,
+                username: username,
+                full_name: fullName,
+                city: city,
+                district: district,
+                tc_no: tcNo,
+                phone: phone,
+                avatar_url: avatarUrl
+            }]);
 
-        if (profileError) throw profileError;
+            if (profileError) throw profileError;
+        }
 
         alert('Kayıt başarıyla tamamlandı! Giriş yapabilirsiniz.');
         document.getElementById('register-form').reset();
@@ -156,7 +160,8 @@ async function handleLogout() {
     currentUserProfile = null;
     
     // Bottom nav gizle
-    document.getElementById('bottom-nav').classList.add('hidden');
+    const bottomNav = document.getElementById('bottom-nav');
+    if (bottomNav) bottomNav.classList.add('hidden');
     
     // Tüm sekmeleri gizle
     const views = ['view-home', 'view-petfon', 'view-detail', 'view-leaderboard', 'view-profile', 'view-admin'];
@@ -166,21 +171,31 @@ async function handleLogout() {
     });
     
     // Auth ekranını göster
-    document.getElementById('view-auth').classList.remove('hidden');
+    const authView = document.getElementById('view-auth');
+    if (authView) authView.classList.remove('hidden');
     toggleAuthMode('login');
 }
 
 // PROFİL BİLGİLERİNİ EKRANA DOLDURMA
 function updateProfileUI(profile, email) {
     if (!profile) return;
-    document.getElementById('profile-img').src = profile.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
-    document.getElementById('profile-name').innerText = profile.full_name || 'Kullanıcı';
-    document.getElementById('profile-email').innerText = email;
+    const imgEl = document.getElementById('profile-img');
+    const nameEl = document.getElementById('profile-name');
+    const emailEl = document.getElementById('profile-email');
+
+    if (imgEl) imgEl.src = profile.avatar_url || 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150';
+    if (nameEl) nameEl.innerText = profile.full_name || 'Kullanıcı';
+    if (emailEl) emailEl.innerText = email;
     
-    document.getElementById('info-username').innerText = profile.username || '-';
-    document.getElementById('info-tc').innerText = profile.tc_no || '-';
-    document.getElementById('info-phone').innerText = profile.phone || '-';
-    document.getElementById('info-location').innerText = `${profile.district || ''} / ${profile.city || ''}`;
+    const uName = document.getElementById('info-username');
+    const tc = document.getElementById('info-tc');
+    const phone = document.getElementById('info-phone');
+    const loc = document.getElementById('info-location');
+
+    if (uName) uName.innerText = profile.username || '-';
+    if (tc) tc.innerText = profile.tc_no || '-';
+    if (phone) phone.innerText = profile.phone || '-';
+    if (loc) loc.innerText = `${profile.district || ''} / ${profile.city || ''}`;
 }
 
 // --- TAB SEÇİMİ VE SAYFA GEÇİŞLERİ ---
@@ -195,7 +210,7 @@ function switchTab(tab) {
     const activeView = document.getElementById(`view-${tab}`);
     if (activeView) activeView.classList.remove('hidden');
 
-    // Bottom nav aktifliği güncelleme
+    // Bottom nav aktifliği güncelleme (Güvenli Kontrol)
     document.querySelectorAll('.nav-item').forEach(nav => {
         nav.classList.remove('text-brand-orange');
         nav.classList.add('text-gray-400');
@@ -279,11 +294,23 @@ function renderLeaderboard() {
 }
 
 // --- SEPET VE BAĞIŞ MODAL İŞLEMLERİ ---
-function openCartModal() { document.getElementById('cart-modal').classList.remove('hidden'); }
-function closeCartModal() { document.getElementById('cart-modal').classList.add('hidden'); }
+function openCartModal() { 
+    const el = document.getElementById('cart-modal');
+    if (el) el.classList.remove('hidden'); 
+}
+function closeCartModal() { 
+    const el = document.getElementById('cart-modal');
+    if (el) el.classList.add('hidden'); 
+}
 
-function openDonationModal() { document.getElementById('donation-modal').classList.remove('hidden'); }
-function closeDonationModal() { document.getElementById('donation-modal').classList.add('hidden'); }
+function openDonationModal() { 
+    const el = document.getElementById('donation-modal');
+    if (el) el.classList.remove('hidden'); 
+}
+function closeDonationModal() { 
+    const el = document.getElementById('donation-modal');
+    if (el) el.classList.add('hidden'); 
+}
 
 function calculateFee() {
     const amt = parseFloat(document.getElementById('donation-amount').value) || 0;
@@ -296,6 +323,7 @@ function calculateFee() {
 function toggleDonationSubmit() {
     const cb = document.getElementById('fee-checkbox');
     const btn = document.getElementById('btn-submit-donation');
+    if (!cb || !btn) return;
     btn.disabled = !cb.checked;
     if (cb.checked) {
         btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
@@ -315,8 +343,11 @@ function addToCart(id) {
     const prod = storeProducts.find(p => p.id === id);
     if (prod) {
         cart.push(prod);
-        document.getElementById('cart-badge').innerText = cart.length;
-        document.getElementById('cart-badge').classList.remove('hidden');
+        const badge = document.getElementById('cart-badge');
+        if (badge) {
+            badge.innerText = cart.length;
+            badge.classList.remove('hidden');
+        }
         renderCartItems();
     }
 }
@@ -324,6 +355,8 @@ function addToCart(id) {
 function renderCartItems() {
     const container = document.getElementById('cart-items-container');
     const totalPriceEl = document.getElementById('cart-total-price');
+    if (!container || !totalPriceEl) return;
+    
     let total = 0;
     container.innerHTML = cart.map(item => {
         total += item.price;
@@ -341,7 +374,8 @@ function checkoutCart() {
     if (cart.length === 0) return alert('Sepetiniz boş!');
     alert('Siparişiniz alındı. Kâr sokak canlarına aktarıldı!');
     cart = [];
-    document.getElementById('cart-badge').classList.add('hidden');
+    const badge = document.getElementById('cart-badge');
+    if (badge) badge.classList.add('hidden');
     renderCartItems();
     closeCartModal();
 }
@@ -377,6 +411,7 @@ function initWheel() {
 
 function spinWheel() {
     const canvas = document.getElementById('wheel-canvas');
+    if (!canvas) return;
     const deg = Math.floor(2000 + Math.random() * 2000);
     canvas.style.transform = `rotate(${deg}deg)`;
     setTimeout(() => {
