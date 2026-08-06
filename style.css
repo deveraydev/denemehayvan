@@ -1,35 +1,141 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
-body {
-    font-family: 'Inter', sans-serif;
-    -webkit-tap-highlight-color: transparent;
+:root {
+    --primary-color: #ff8c00;
+    --primary-hover: #e67e00;
+    --bg-color: #f8f9fa;
+    --card-bg: #ffffff;
+    --text-dark: #333333;
+    --text-muted: #777777;
+    --border-color: #eeeeee;
+    --soft-orange: #fff3e6;
+    --danger: #dc3545;
 }
 
-/* Scrollbar Gizleme */
-.no-scrollbar::-webkit-scrollbar {
-    display: none;
-}
-.no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+body { background-color: #e0e5ec; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+
+.app-container {
+    width: 100%; max-width: 414px; height: 896px; max-height: 100vh;
+    background-color: var(--bg-color); position: relative; overflow: hidden;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1); border-radius: 20px;
+    display: flex; flex-direction: column;
 }
 
-/* Modal Animasyon Yardımcıları */
-.modal-active {
-    opacity: 1 !important;
-}
-.sheet-active {
-    transform: translateY(0) !important;
-}
+/* Tipografi & Butonlar */
+h2, h3, h4 { color: var(--text-dark); margin-bottom: 10px; }
+p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+.mt-10 { margin-top: 10px; } .mt-20 { margin-top: 20px; }
 
-/* Cam Efekti (Glassmorphism) */
-.glass {
-    background: rgba(255, 255, 255, 0.7);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-}
+.btn { padding: 12px 20px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer; transition: 0.3s; display: inline-flex; align-items: center; justify-content: center; gap: 8px;}
+.btn-block { width: 100%; }
+.btn-primary { background-color: var(--primary-color); color: white; }
+.btn-primary:hover { background-color: var(--primary-hover); }
+.btn-primary:disabled { background-color: #ffc480; cursor: not-allowed; }
+.btn-danger { background-color: var(--soft-orange); color: var(--danger); }
+.btn-outline { background-color: transparent; border: 2px solid var(--primary-color); color: var(--primary-color); }
+.btn-back { background: none; border: none; font-size: 16px; color: var(--text-dark); padding: 15px; cursor: pointer; }
 
-/* Güvenli Alanlar (iOS) */
-.pb-safe {
-    padding-bottom: env(safe-area-inset-bottom, 20px);
+/* Navbar & Alt Menü */
+.navbar { padding: 15px 20px; background: var(--card-bg); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); z-index: 10; }
+.logo { color: var(--primary-color); font-weight: bold; font-size: 20px; }
+.cart-icon { position: relative; font-size: 20px; cursor: pointer; color: var(--text-dark);}
+#cart-count { position: absolute; top: -8px; right: -10px; background: var(--primary-color); color: white; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 10px; }
+
+.bottom-nav { position: absolute; bottom: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 10px 0; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 10; }
+.nav-item { text-decoration: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; font-size: 12px; gap: 4px; }
+.nav-item.active { color: var(--primary-color); }
+.nav-item i { font-size: 20px; }
+
+/* Görünümler (Views) */
+.view { display: none; height: 100%; overflow-y: auto; padding-bottom: 70px; background: var(--bg-color);}
+.view.active { display: block; }
+
+/* Giriş Ekranı */
+.login-container { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; padding: 30px; text-align: center; background: #fffcf8; }
+.login-logo i { font-size: 60px; color: var(--primary-color); margin-bottom: 20px; }
+.input-group { width: 100%; margin-bottom: 15px; }
+.input-group input { width: 100%; padding: 15px; border: 1px solid var(--border-color); border-radius: 10px; background: var(--card-bg); font-size: 14px; outline: none;}
+.input-group input:focus { border-color: var(--primary-color); }
+.register-text { margin-top: 20px; font-size: 13px; }
+.register-text a { color: var(--primary-color); text-decoration: none; font-weight: bold; }
+
+/* Ana Sayfa & Hayvan Kartları */
+.page-title { padding: 20px; font-size: 22px; font-weight: bold; color: var(--text-dark); background: var(--bg-color); position: sticky; top: 0; z-index: 5;}
+.card-list { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; }
+.animal-card { background: var(--card-bg); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.03); }
+.animal-card img { width: 100%; height: 180px; object-fit: cover; }
+.card-body { padding: 15px; }
+.card-actions { display: flex; gap: 10px; margin-top: 15px; }
+.card-actions button { flex: 1; }
+
+/* Hayvan Detay Ekranı */
+.detail-header-img { width: 100%; height: 250px; object-fit: cover; }
+.detail-content { padding: 20px; background: var(--card-bg); border-radius: 20px 20px 0 0; margin-top: -20px; position: relative; }
+.info-badge { display: inline-block; background: var(--soft-orange); color: var(--primary-color); padding: 5px 10px; border-radius: 8px; font-size: 12px; font-weight: bold; margin-bottom: 10px; margin-right: 5px;}
+.product-support-list { margin-top: 20px; }
+.support-item { display: flex; justify-content: space-between; align-items: center; background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 10px; border: 1px solid var(--border-color); }
+.support-item-info { display: flex; flex-direction: column; }
+.support-item-price { font-weight: bold; color: var(--primary-color); }
+
+/* Mağaza */
+.shop-info { padding: 0 20px 10px; font-size: 13px; color: var(--primary-color); font-weight: 500;}
+.shop-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 0 20px; }
+.product-card { background: var(--card-bg); border-radius: 12px; padding: 10px; text-align: center; border: 1px solid var(--border-color); }
+.product-card img { width: 100%; height: 100px; object-fit: contain; margin-bottom: 10px; }
+.product-card h4 { font-size: 14px; margin-bottom: 5px; height: 40px; }
+.product-card .price { color: var(--primary-color); font-weight: bold; margin-bottom: 10px; }
+
+/* Profil & Çark */
+.profile-header { text-align: center; padding: 30px 20px; background: var(--card-bg); margin-bottom: 15px; }
+.profile-img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid var(--primary-color); margin-bottom: 10px; }
+.badge { background: #ffd700; color: #856404; padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: bold; }
+.total-support-text { margin-top: 10px; font-size: 16px; font-weight: bold; color: var(--primary-color); }
+
+.wheel-section { background: var(--card-bg); padding: 25px 20px; text-align: center; }
+.wheel-container { position: relative; width: 260px; height: 260px; margin: 20px auto; }
+.wheel-pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; color: var(--danger); z-index: 2; text-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+.wheel { 
+    width: 100%; height: 100%; border-radius: 50%; border: 4px solid var(--primary-color);
+    position: relative; overflow: hidden; transition: transform 4s cubic-bezier(0.17, 0.67, 0.12, 0.99);
+    background: conic-gradient(
+        #ff9f43 0deg 60deg, #ff6b6b 60deg 120deg, #48dbfb 120deg 180deg,
+        #1dd1a1 180deg 240deg, #feca57 240deg 300deg, #ff9ff3 300deg 360deg
+    );
 }
+.wheel-slice { position: absolute; width: 50%; height: 50%; transform-origin: 100% 100%; left: 0; top: 0; display: flex; align-items: center; justify-content: center; }
+/* Dilim Metin Ayarları (Çark büyük, yazılar net) */
+.wheel-slice span { position: absolute; transform: rotate(30deg) translateY(-85px); font-size: 12px; font-weight: bold; color: white; text-shadow: 1px 1px 2px rgba(0,0,0,0.6); white-space: nowrap; }
+.slice-1 { transform: rotate(0deg) skewY(-30deg); }
+.slice-2 { transform: rotate(60deg) skewY(-30deg); }
+.slice-3 { transform: rotate(120deg) skewY(-30deg); }
+.slice-4 { transform: rotate(180deg) skewY(-30deg); }
+.slice-5 { transform: rotate(240deg) skewY(-30deg); }
+.slice-6 { transform: rotate(300deg) skewY(-30deg); }
+
+.wheel-result-text { margin-top: 15px; font-size: 18px; font-weight: bold; color: var(--primary-color); min-height: 25px;}
+
+/* Destek Kartı (Sosyal Medya Paylaşım) */
+.shareable-card { background: linear-gradient(135deg, #fffcf8 0%, #ffe8cc 100%); padding: 30px 20px; border-radius: 15px; text-align: center; position: relative; border: 2px solid var(--primary-color); box-shadow: 0 10px 20px rgba(255,140,0,0.15); }
+.shareable-card .card-logo { font-weight: bold; color: var(--primary-color); font-size: 20px; margin-bottom: 15px; }
+.shareable-card img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid white; box-shadow: 0 4px 8px rgba(0,0,0,0.1); margin-bottom: 15px; }
+.emotional-text { font-size: 15px; font-style: italic; color: #444; margin-top: 15px; line-height: 1.6; }
+.card-footer { margin-top: 20px; font-weight: bold; color: var(--primary-color); font-size: 14px; }
+
+/* Modallar */
+.modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 100; justify-content: center; align-items: flex-end; }
+.modal-content { background: var(--card-bg); width: 100%; padding: 25px 20px 40px; border-radius: 25px 25px 0 0; position: relative; animation: slideUp 0.3s ease-out; }
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.close-btn { position: absolute; top: 15px; right: 20px; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+
+/* Ödeme Ekranı Detayları */
+.payment-details { background: var(--bg-color); padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+.flex-row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 15px; }
+.fee-row { color: var(--danger); }
+.total-row { font-weight: bold; font-size: 18px; margin-top: 10px; color: var(--primary-color); }
+hr { border: none; border-top: 1px dashed var(--border-color); margin: 10px 0; }
+.custom-amount-group { margin-bottom: 20px; }
+.custom-amount-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px;}
+.custom-amount-group input { width: 100%; padding: 12px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 16px; }
+.checkbox-group { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 20px; }
+.checkbox-group input { margin-top: 3px; accent-color: var(--primary-color); width: 18px; height: 18px;}
+.checkbox-group label { font-size: 13px; color: var(--text-dark); line-height: 1.4; font-weight: 500;}
