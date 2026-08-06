@@ -1,156 +1,31 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* Custom Scrollbar Removal for Horizontal Menus */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
 }
 
-body {
-  background-color: #f0f2f5;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-  padding: 20px;
+/* Animations */
+@keyframes slideUp {
+    from {
+        transform: translateY(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
-.auth-wrapper {
-  width: 100%;
-  max-width: 420px;
+.animate-slide-up {
+    animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.card {
-  background: #ffffff;
-  padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-}
-
-.hidden {
-  display: none !important;
-}
-
-h2 {
-  color: #1a1a1a;
-  margin-bottom: 20px;
-  text-align: center;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-row {
-  display: flex;
-  gap: 10px;
-}
-
-.form-row .form-group {
-  flex: 1;
-}
-
-label {
-  display: block;
-  font-size: 13px;
-  font-weight: 600;
-  color: #4a5568;
-  margin-bottom: 5px;
-}
-
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="tel"],
-input[type="file"] {
-  width: 100%;
-  padding: 10px 12px;
-  border: 1px solid #cbd5e0;
-  border-radius: 6px;
-  font-size: 14px;
-  outline: none;
-  transition: border-color 0.2s;
-}
-
-input:focus {
-  border-color: #3182ce;
-}
-
-.btn {
-  width: 100%;
-  padding: 12px;
-  background-color: #3182ce;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-size: 15px;
-  font-weight: 600;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.2s;
-}
-
-.btn:hover {
-  background-color: #2b6cb0;
-}
-
-.btn:disabled {
-  background-color: #a0aec0;
-  cursor: not-allowed;
-}
-
-.btn-secondary {
-  background-color: #e53e3e;
-}
-
-.btn-secondary:hover {
-  background-color: #c53030;
-}
-
-.toggle-text {
-  text-align: center;
-  margin-top: 18px;
-  font-size: 14px;
-  color: #718096;
-}
-
-.toggle-text a {
-  color: #3182ce;
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.toggle-text a:hover {
-  text-decoration: underline;
-}
-
-/* Profil Alanı Stilleri */
-.profile-header {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.avatar-img {
-  width: 90px;
-  height: 90px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 3px solid #3182ce;
-  margin-bottom: 10px;
-}
-
-.sub-text {
-  color: #718096;
-  font-size: 14px;
-}
-
-.profile-details {
-  border-top: 1px solid #e2e8f0;
-  padding-top: 15px;
-  margin-bottom: 20px;
-}
-
-.profile-details p {
-  font-size: 14px;
-  color: #4a5568;
-  margin-bottom: 8px;
+/* Glassmorphism helpers */
+.glass-header {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
 }
