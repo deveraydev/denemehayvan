@@ -1,374 +1,103 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PatiFon Mobile - Hayvan Destek & Pet Shop Platformu</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script> 
-    <!-- Supabase JS SDK -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-<script>
-  const supabaseUrl = 'https://bzzmordwmlngbqrasuwr.supabase.co'
-  const supabaseAnonKey = 'sb_publishable_w44uuUXk_MT1bQ1IbK8Lzg_oDOTrF10'
-  
-  const supabase = window.supabase.createClient(supabaseUrl, supabaseAnonKey)
-</script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            orange: '#FF7A00',
-                            cream: '#FFF9F5',
-                            green: '#2E7D32',
-                            brown: '#5D4037',
-                            softBg: '#F8F9FA'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    <!-- Lucide Icons -->
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <!-- Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Giriş Yap ve Kayıt Ol</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Supabase JS SDK CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
-<body class="bg-gray-100 text-gray-800 font-sans antialiased selection:bg-brand-orange selection:text-white">
+<body>
 
-    <!-- Splash Screen (8 Saniyelik Intro) -->
-    <div id="splash-screen" class="fixed inset-0 z-50 bg-black flex items-center justify-center transition-opacity duration-700">
-        <video id="intro-video" class="w-full h-full object-cover" autoplay muted playsinline>
-            <source src="intro.mp4" type="video/mp4">
-            <div class="text-white text-center">
-                <h1 class="text-4xl font-bold text-brand-orange mb-2">PatiFon</h1>
-                <p>Yükleniyor...</p>
-            </div>
-        </video>
+  <div class="auth-wrapper">
+    
+    <!-- GİRİŞ FORMU -->
+    <div id="login-card" class="card">
+      <h2>Giriş Yap</h2>
+      <form id="login-form">
+        <div class="form-group">
+          <label for="login-email">E-Posta Adresi</label>
+          <input type="email" id="login-email" placeholder="ornek@email.com" required>
+        </div>
+        <div class="form-group">
+          <label for="login-password">Şifre</label>
+          <input type="password" id="login-password" placeholder="••••••••" required>
+        </div>
+        <button type="submit" class="btn">Giriş Yap</button>
+      </form>
+      <p class="toggle-text">
+        Hesabınız yok mu? <a href="#" id="go-to-register">Kayıt Ol</a>
+      </p>
     </div>
 
-    <!-- Main Container (Mobil Uyumlu Çerçeve) -->
-    <div id="app" class="max-w-md mx-auto bg-white min-h-screen shadow-2xl relative flex flex-col pb-20 hidden">
-        
-        <!-- Top Header -->
-        <header class="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-gray-100 px-4 py-3 flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 rounded-full bg-brand-orange flex items-center justify-center text-white font-bold text-lg">P</div>
-                <span class="font-black text-xl tracking-tight text-gray-900">Pati<span class="text-brand-orange">Fon</span></span>
-            </div>
-            <div class="flex items-center gap-2">
-                <!-- Cart Button -->
-                <button onclick="openCartModal()" class="p-2 rounded-full hover:bg-gray-100 text-gray-600 relative transition" title="Sepetim">
-                    <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                    <span id="cart-badge" class="absolute -top-0.5 -right-0.5 w-4 h-4 bg-brand-orange text-white text-[10px] font-bold rounded-full flex items-center justify-center hidden">0</span>
-                </button>
-                <button onclick="switchTab('admin')" class="p-2 rounded-full hover:bg-gray-100 text-gray-600 transition" title="Admin Yönetimi">
-                    <i data-lucide="shield-alert" class="w-5 h-5"></i>
-                </button>
-                <button onclick="toggleNotifications()" class="p-2 rounded-full hover:bg-gray-100 text-gray-600 relative transition">
-                    <i data-lucide="bell" class="w-5 h-5"></i>
-                    <span class="absolute top-1 right-1 w-2 h-2 bg-brand-orange rounded-full"></span>
-                </button>
-            </div>
-        </header>
-
-        <!-- View 1: Auth (Giriş / Kayıt) -->
-        <section id="view-auth" class="p-6 flex-1 flex flex-col justify-center">
-            <div class="text-center mb-8">
-                <div class="w-20 h-20 bg-brand-cream text-brand-orange rounded-3xl mx-auto flex items-center justify-center mb-4 shadow-inner">
-                    <i data-lucide="heart-handshake" class="w-10 h-10"></i>
-                </div>
-                <h2 class="text-2xl font-bold text-gray-900">PatiFon'a Hoş Geldiniz</h2>
-                <p class="text-sm text-gray-500 mt-1">Sokaktaki canlara umut olmak için giriş yapın.</p>
-            </div>
-
-            <!-- Login Form -->
-            <form id="login-form" class="space-y-4" onsubmit="handleLogin(event)">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Kullanıcı Adı</label>
-                    <input type="text" id="login-username" value="admin" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/50 transition">
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Şifre</label>
-                    <input type="password" id="login-password" value="admin" required class="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/50 transition">
-                </div>
-                <div class="flex items-center justify-between text-xs">
-                    <label class="flex items-center gap-2 text-gray-600">
-                        <input type="checkbox" class="rounded text-brand-orange focus:ring-brand-orange" checked> Beni Hatırla
-                    </label>
-                    <a href="#" class="text-brand-orange font-semibold">Şifremi Unuttum</a>
-                </div>
-                <button type="submit" class="w-full py-3.5 bg-brand-orange hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg shadow-orange-500/20 transition active:scale-95">Giriş Yap</button>
-            </form>
-            <p class="text-xs text-center text-gray-400 mt-6">Geliştirici Girişi: <span class="font-mono text-gray-700">admin / admin</span></p>
-        </section>
-
-        <!-- View 2: Home Feed -->
-        <section id="view-home" class="hidden flex-1 p-4 space-y-4">
-            <!-- Search & Filters -->
-            <div class="space-y-3">
-                <div class="relative">
-                    <i data-lucide="search" class="w-5 h-5 absolute left-3 top-3.5 text-gray-400"></i>
-                    <input type="text" id="search-input" onkeyup="filterAnimals()" placeholder="İsim, hastalık, barınak ara..." class="w-full pl-10 pr-4 py-3 rounded-2xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-brand-orange/40 text-sm">
-                </div>
-                <!-- Categories Horizontal Scroll -->
-                <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-medium">
-                    <button onclick="setCategoryFilter('all')" class="cat-btn active px-4 py-2 rounded-full border bg-brand-orange text-white whitespace-nowrap">Tümü</button>
-                    <button onclick="setCategoryFilter('Acil')" class="cat-btn px-4 py-2 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🚨 Acil Vakalar</button>
-                    <button onclick="setCategoryFilter('Kedi')" class="cat-btn px-4 py-2 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🐱 Kediler</button>
-                    <button onclick="setCategoryFilter('Köpek')" class="cat-btn px-4 py-2 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🐶 Köpekler</button>
-                    <button onclick="setCategoryFilter('Engelli')" class="cat-btn px-4 py-2 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">♿ Engelli Canlar</button>
-                </div>
-            </div>
-
-            <!-- Feed Container -->
-            <div id="animal-feed-list" class="space-y-6">
-                <!-- JS Populated -->
-            </div>
-        </section>
-
-        <!-- View 3: PetFon Store (YENİ MENÜ) -->
-        <section id="view-petfon" class="hidden flex-1 p-4 space-y-4">
-            <div class="bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl p-4 text-white space-y-1 shadow-md">
-                <div class="flex items-center gap-2">
-                    <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-                    <h2 class="text-xl font-black">PetFon Mağazası</h2>
-                </div>
-                <p class="text-xs text-orange-100">Satın aldığınız ürünlerin kârı barınaklardaki can dostlarımıza mama olarak aktarılır.</p>
-            </div>
-
-            <!-- Store Filters -->
-            <div class="flex gap-2 overflow-x-auto pb-1 no-scrollbar text-xs font-medium">
-                <button onclick="filterStore('all')" class="store-cat-btn active px-3.5 py-1.5 rounded-full border bg-brand-orange text-white whitespace-nowrap">Tüm Ürünler</button>
-                <button onclick="filterStore('mama')" class="store-cat-btn px-3.5 py-1.5 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🍖 Mamalar</button>
-                <button onclick="filterStore('bakim')" class="store-cat-btn px-3.5 py-1.5 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🩺 Bakım & Hijyen</button>
-                <button onclick="filterStore('barinma')" class="store-cat-btn px-3.5 py-1.5 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🏠 Barınma & Yatak</button>
-                <button onclick="filterStore('aksesuar')" class="store-cat-btn px-3.5 py-1.5 rounded-full border border-gray-200 text-gray-600 bg-white whitespace-nowrap">🎾 Aksesuar & Oyuncak</button>
-            </div>
-
-            <!-- Product Grid -->
-            <div id="store-products-list" class="grid grid-cols-2 gap-3">
-                <!-- JS Populated -->
-            </div>
-        </section>
-
-        <!-- View 4: Animal Detail & Donation -->
-        <section id="view-detail" class="hidden flex-1 pb-6">
-            <div id="detail-content">
-                <!-- JS Populated -->
-            </div>
-        </section>
-
-        <!-- View 5: Leaderboard -->
-        <section id="view-leaderboard" class="hidden flex-1 p-4 space-y-4">
-            <div class="text-center py-4 bg-gradient-to-b from-orange-50 to-white rounded-2xl border border-orange-100">
-                <i data-lucide="trophy" class="w-10 h-10 text-brand-orange mx-auto mb-1"></i>
-                <h2 class="text-xl font-black text-gray-900">En Hayırsever Koruyucular</h2>
-                <p class="text-xs text-gray-500">Can dostlarımıza en çok umut olan ilk 10 melek</p>
-            </div>
-            <div id="global-leaderboard-list" class="space-y-3">
-                <!-- JS Populated -->
-            </div>
-        </section>
-
-        <!-- View 6: My Donations & Profile + PATİ ÇARKI -->
-        <section id="view-profile" class="hidden flex-1 p-4 space-y-6">
-            <div class="flex items-center gap-4 bg-gray-50 p-4 rounded-2xl border border-gray-100">
-                <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" class="w-16 h-16 rounded-full object-cover ring-2 ring-brand-orange">
-                <div>
-                    <h3 class="font-bold text-gray-900 text-lg">Irmak Günay</h3>
-                    <p class="text-xs text-gray-500">irmak@patifon.org</p>
-
-                    <div class="mt-1 inline-flex items-center gap-1 bg-amber-100 text-amber-800 text-[10px] font-bold px-2 py-0.5 rounded-full">
-                        <i data-lucide="award" class="w-3 h-3"></i> Altın Destekçi
-                    </div>
-                </div>
-            </div>
-
-            <!-- Stats -->
-            <div class="grid grid-cols-2 gap-3">
-                <div class="p-3 bg-brand-cream border border-orange-100 rounded-xl text-center">
-                    <span id="user-total-donation" class="block text-xl font-black text-brand-orange">₺4,250</span>
-                    <span class="text-xs text-gray-500">Toplam Bağış</span>
-                </div>
-                <div class="p-3 bg-green-50 border border-green-100 rounded-xl text-center">
-                    <span class="block text-xl font-black text-brand-green">12</span>
-                    <span class="text-xs text-gray-500">Desteklenen Can</span>
-                </div>
-            </div>
-
-            <!-- PATİ ÇARKI (WHEEL OF FORTUNE) SECTION -->
-            <div class="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200 rounded-3xl p-4 text-center space-y-3 relative overflow-hidden shadow-sm">
-                <div class="flex items-center justify-center gap-1.5 text-amber-900 font-black text-base">
-                    <i data-lucide="sparkles" class="w-5 h-5 text-brand-orange"></i>
-                    <span>PatiFon Hediye Çarkı</span>
-                </div>
-                <p class="text-xs text-amber-700">En az ₺3,000 destekte bulunan özel koruyucularımız 72 saatte bir çarkı çevirip sokak canlıları için hediye kazanıyor!</p>
-
-                <!-- Wheel Canvas Container -->
-                <div class="relative w-64 h-64 mx-auto my-2 flex items-center justify-center">
-                    <!-- Wheel Pointer -->
-                    <div class="absolute -top-3 z-20 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[20px] border-t-red-600 drop-shadow"></div>
-                    <canvas id="wheel-canvas" width="256" height="256" class="w-full h-full rounded-full border-4 border-amber-400 shadow-xl transition-transform duration-[4000ms] cubic-bezier(0.15, 0.99, 0.18, 0.99)"></canvas>
-                </div>
-
-                <!-- Spin Button or Locked Message -->
-                <div id="wheel-action-area" class="pt-1">
-                    <button id="btn-spin-wheel" onclick="spinWheel()" class="w-full py-3 bg-brand-orange hover:bg-orange-600 text-white font-bold rounded-xl shadow-md transition active:scale-95">
-                        Çarkı Çevir
-                    </button>
-                    <div id="wheel-cooldown-msg" class="hidden text-xs font-bold text-amber-800 bg-amber-100/80 py-2.5 rounded-xl border border-amber-200">
-                        ⏳ Sonraki hak: <span id="cooldown-timer">71:59:59</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Donation History -->
-            <div>
-                <h4 class="font-bold text-sm text-gray-800 mb-3 flex items-center justify-between">
-                    <span>Geçmiş Bağışlarım</span>
-                    <i data-lucide="history" class="w-4 h-4 text-gray-400"></i>
-                </h4>
-                <div class="space-y-2">
-                    <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl text-xs">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-orange-100 text-brand-orange flex items-center justify-center font-bold">L</div>
-                            <div>
-                                <p class="font-bold text-gray-800">Luna - Bacak Ameliyatı</p>
-                                <p class="text-gray-400 text-[10px]">02 Ağustos 2026</p>
-                            </div>
-                        </div>
-                        <span class="font-bold text-brand-green">+₺500</span>
-                    </div>
-                    <div class="flex items-center justify-between p-3 bg-white border border-gray-100 rounded-xl text-xs">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">M</div>
-                            <div>
-                                <p class="font-bold text-gray-800">Maviş - Kan Tedavisi</p>
-                                <p class="text-gray-400 text-[10px]">28 Temmuz 2026</p>
-                            </div>
-                        </div>
-                        <span class="font-bold text-brand-green">+₺1,250</span>
-                    </div>
-                </div>
-            </div>
-
-            <button onclick="handleLogout()" class="w-full py-3 bg-red-50 text-red-600 font-bold text-sm rounded-xl border border-red-100 hover:bg-red-100 transition">Çıkış Yap</button>
-        </section>
-
-        <!-- View 7: Admin Dashboard (UI Only) -->
-        <section id="view-admin" class="hidden flex-1 p-4 space-y-4">
-            <div class="flex items-center justify-between border-b pb-2">
-                <h2 class="font-bold text-lg text-gray-900">Yönetici Paneli</h2>
-                <span class="text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded">Sadece Yönetim</span>
-            </div>
-
-            <div class="grid grid-cols-2 gap-3 text-xs">
-                <div class="p-3 bg-gray-50 border rounded-xl">
-                    <p class="text-gray-400">Toplam Bağış</p>
-                    <p class="text-lg font-bold text-gray-800">₺142,500</p>
-                </div>
-                <div class="p-3 bg-gray-50 border rounded-xl">
-                    <p class="text-gray-400">Aktif İlanlar</p>
-                    <p class="text-lg font-bold text-gray-800">24 İlan</p>
-                </div>
-            </div>
-
-            <div class="space-y-2 text-xs">
-                <button class="w-full p-3 bg-white border border-gray-200 rounded-xl font-semibold text-left flex justify-between items-center hover:bg-gray-50">
-                    <span>➕ Yeni İlan / Hayvan Ekle</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                </button>
-                <button class="w-full p-3 bg-white border border-gray-200 rounded-xl font-semibold text-left flex justify-between items-center hover:bg-gray-50">
-                    <span>🧾 Şeffaflık Belgesi & Fatura Yükle</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                </button>
-                <button class="w-full p-3 bg-white border border-gray-200 rounded-xl font-semibold text-left flex justify-between items-center hover:bg-gray-50">
-                    <span>🏛️ Barınak Yönetimi</span>
-                    <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
-                </button>
-            </div>
-        </section>
-
-        <!-- Bottom Navigation Bar (GÜNCELLENMİŞ PETFON MENÜLÜ) -->
-        <nav id="bottom-nav" class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/90 backdrop-blur-md border-t border-gray-200 px-4 py-2 flex justify-between items-center z-40 hidden">
-            <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-0.5 text-brand-orange" id="nav-home">
-                <i data-lucide="heart" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold">İlanlar</span>
-            </button>
-            <button onclick="switchTab('petfon')" class="nav-item flex flex-col items-center gap-0.5 text-gray-400 hover:text-brand-orange transition" id="nav-petfon">
-                <i data-lucide="shopping-bag" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold">PetFon</span>
-            </button>
-            <button onclick="switchTab('leaderboard')" class="nav-item flex flex-col items-center gap-0.5 text-gray-400 hover:text-brand-orange transition" id="nav-leaderboard">
-                <i data-lucide="trophy" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold">Sıralama</span>
-            </button>
-            <button onclick="switchTab('profile')" class="nav-item flex flex-col items-center gap-0.5 text-gray-400 hover:text-brand-orange transition" id="nav-profile">
-                <i data-lucide="user" class="w-5 h-5"></i>
-                <span class="text-[10px] font-semibold">Profilim</span>
-            </button>
-        </nav>
-
-        <!-- Donation Modal Overlay -->
-        <div id="donation-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="bg-white w-full max-w-md rounded-t-3xl p-6 space-y-4 animate-slide-up">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <h3 class="font-bold text-gray-900 text-lg">Tedaviye Destek Ol</h3>
-                    <button onclick="closeDonationModal()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
-                </div>
-                
-                <div class="space-y-3">
-                    <label class="block text-xs font-bold text-gray-600 uppercase">Bağış Miktarı (₺)</label>
-                    <input type="number" id="donation-amount" value="1000" oninput="calculateFee()" class="w-full text-2xl font-black text-brand-orange border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-brand-orange">
-                    
-                    <div class="bg-gray-50 p-3 rounded-xl space-y-1 text-xs text-gray-600 border border-gray-100">
-                        <div class="flex justify-between"><span>Bağış Tutarı:</span><span id="base-amount" class="font-semibold">₺1000</span></div>
-                        <div class="flex justify-between"><span>PatiFon %12 Hizmet Bedeli:</span><span id="fee-amount" class="font-semibold">₺120</span></div>
-                        <div class="flex justify-between font-bold text-gray-900 text-sm pt-1 border-t"><span>Toplam Toplanan:</span><span id="total-amount" class="text-brand-orange">₺1120</span></div>
-                    </div>
-
-                    <label class="flex items-center gap-2 text-xs text-gray-600 cursor-pointer pt-2">
-                        <input type="checkbox" id="fee-checkbox" onchange="toggleDonationSubmit()" class="rounded text-brand-orange focus:ring-brand-orange w-4 h-4">
-                        PatiFon'un %12 hizmet bedeli koşulunu kabul ediyorum.
-                    </label>
-
-                    <button id="btn-submit-donation" disabled onclick="processPayment()" class="w-full py-4 bg-gray-300 text-white font-bold rounded-xl text-center transition cursor-not-allowed">Ödemeye Geç</button>
-                </div>
-            </div>
+    <!-- KAYIT FORMU -->
+    <div id="register-card" class="card hidden">
+      <h2>Kayıt Ol</h2>
+      <form id="register-form">
+        <div class="form-group">
+          <label for="reg-username">Kullanıcı Adı</label>
+          <input type="text" id="reg-username" placeholder="kullaniciadi" required>
         </div>
-
-        <!-- Cart Modal Overlay -->
-        <div id="cart-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-end justify-center hidden">
-            <div class="bg-white w-full max-w-md rounded-t-3xl p-6 space-y-4 animate-slide-up max-h-[80vh] flex flex-col">
-                <div class="flex justify-between items-center border-b pb-3">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="shopping-cart" class="w-5 h-5 text-brand-orange"></i>
-                        <h3 class="font-bold text-gray-900 text-lg">Alışveriş Sepetim</h3>
-                    </div>
-                    <button onclick="closeCartModal()" class="text-gray-400 hover:text-gray-600"><i data-lucide="x" class="w-6 h-6"></i></button>
-                </div>
-                
-                <div id="cart-items-container" class="flex-1 overflow-y-auto space-y-3 py-2">
-                    <!-- JS Populated -->
-                </div>
-
-                <div class="border-t pt-3 space-y-3">
-                    <div class="flex justify-between font-bold text-base text-gray-900">
-                        <span>Toplam Tutar:</span>
-                        <span id="cart-total-price" class="text-brand-orange">₺0</span>
-                    </div>
-                    <button onclick="checkoutCart()" class="w-full py-3.5 bg-brand-orange hover:bg-orange-600 text-white font-bold rounded-xl shadow-lg transition">Siparişi Tamamla</button>
-                </div>
-            </div>
+        <div class="form-group">
+          <label for="reg-email">E-Posta Adresi</label>
+          <input type="email" id="reg-email" placeholder="ornek@email.com" required>
         </div>
-
+        <div class="form-group">
+          <label for="reg-password">Şifre</label>
+          <input type="password" id="reg-password" placeholder="En az 6 karakter" minlength="6" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-fullname">Ad Soyad</label>
+          <input type="text" id="reg-fullname" placeholder="Ad Soyad" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="reg-city">İl</label>
+            <input type="text" id="reg-city" placeholder="İzmir" required>
+          </div>
+          <div class="form-group">
+            <label for="reg-district">İlçe</label>
+            <input type="text" id="reg-district" placeholder="Konak" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="reg-tc">TC Kimlik No</label>
+          <input type="text" id="reg-tc" placeholder="11 Haneli TC No" maxlength="11" pattern="\d{11}" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-phone">Telefon Numarası</label>
+          <input type="tel" id="reg-phone" placeholder="05XXXXXXXXX" required>
+        </div>
+        <div class="form-group">
+          <label for="reg-avatar">Profil Resmi</label>
+          <input type="file" id="reg-avatar" accept="image/*" required>
+        </div>
+        <button type="submit" id="reg-btn" class="btn">Kayıt Ol</button>
+      </form>
+      <p class="toggle-text">
+        Zaten hesabınız var mı? <a href="#" id="go-to-login">Giriş Yap</a>
+      </p>
     </div>
 
-    <!-- Application Javascript -->
-    <script src="app.js"></script>
+    <!-- GİRİŞ SONRASI HOŞ GELDİN KARTI -->
+    <div id="dashboard-card" class="card hidden">
+      <div class="profile-header">
+        <img id="user-avatar" src="" alt="Profil Resmi" class="avatar-img">
+        <h2 id="user-name">Hoş Geldiniz</h2>
+        <p id="user-email" class="sub-text"></p>
+      </div>
+      <div class="profile-details">
+        <p><strong>Kullanıcı Adı:</strong> <span id="info-username"></span></p>
+        <p><strong>TC No:</strong> <span id="info-tc"></span></p>
+        <p><strong>Telefon:</strong> <span id="info-phone"></span></p>
+        <p><strong>Konum:</strong> <span id="info-location"></span></p>
+      </div>
+      <button id="logout-btn" class="btn btn-secondary">Çıkış Yap</button>
+    </div>
+
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
