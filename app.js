@@ -1,361 +1,244 @@
-// --- UYGULAMA DURUMU (STATE) ---
-const state = {
-    user: {
-        totalDonation: 4500, // 3000 TL üstü olduğu için çark aktif
-        canSpinWheel: true,
-        lastSpinTime: null
-    },
-    cart: [],
-    animals: [
-        { id: 1, name: 'Luna', issue: 'Sol arka bacak kırığı.', shelter: 'İzmir Umut Evi', raised: 8250, target: 15000, img: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=500' },
-        { id: 2, name: 'Maviş', issue: 'Göz enfeksiyonu ve beslenme yetersizliği.', shelter: 'Alsancak Barınağı', raised: 2100, target: 5000, img: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500' }
-    ],
-    products: [
-        { id: 101, name: 'Pro-Plan Kuru Mama 750gr', price: 250, img: 'https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300' },
-        { id: 102, name: 'Yaş Mama Mix 6\'lı', price: 180, img: 'https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300' },
-        { id: 103, name: 'İç Dış Parazit Bakımı', price: 450, img: 'https://images.unsplash.com/photo-1628009368231-7710deaf490c?w=300' },
-        { id: 104, name: 'Sıcak Kedi Yastığı', price: 320, img: 'https://images.unsplash.com/photo-1541599540903-216a46ca1dc0?w=300' }
-    ],
-    leaderboard: [
-        { name: 'Irmak Günay', amount: '₺24,500', badge: 'Diamond Supporter' },
-        { name: 'Ahmet Y.', amount: '₺18,200', badge: 'Platinum Supporter' },
-        { name: 'Selin K.', amount: '₺12,100', badge: 'Gold Supporter' }
-    ],
-    wheelPrizes: [
-        '250gr Kuru Mama', '750gr Kuru Mama', '250gr Yaş Mama', 
-        '750gr Yaş Mama', '2 Adet Ödül Maması', '5 Adet Ödül Maması', 
-        'Premium İç/Dış Parazit'
-    ]
-};
+// --- Veriler ---
+const animals = [
+    { id: 1, name: "Luna", img: "https://images.unsplash.com/photo-1537151608804-ea2f1fa26685?w=500&q=80", shelter: "İzmir Umut Evi", location: "İzmir, Bornova", ailment: "Sol arka bacak kırığı, acil operasyon gerekiyor.", gathered: 8250, target: 15000 },
+    { id: 2, name: "Maviş", img: "https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=500&q=80", shelter: "Alsancak Barınağı", location: "İzmir, Konak", ailment: "Göz enfeksiyonu ve beslenme yetersizliği.", gathered: 2100, target: 5000 },
+    { id: 3, name: "Karabaş", img: "https://images.unsplash.com/photo-1552053831-71594a27632d?w=500&q=80", shelter: "Pati Yuvası", location: "İzmir, Buca", ailment: "Genel sağlık taraması ve aşı eksiklikleri.", gathered: 900, target: 3000 },
+    { id: 4, name: "Tarçın", img: "https://images.unsplash.com/photo-1513360371669-4adf3dd7dff8?w=500&q=80", shelter: "Sokak Dostları Derneği", location: "İzmir, Karşıyaka", ailment: "Deri rahatsızlığı, özel şampuan ve ilaç tedavisi.", gathered: 4500, target: 6000 }
+];
 
-// --- BAŞLATMA ---
-document.addEventListener('DOMContentLoaded', () => {
-    lucide.createIcons();
-    initSplash();
-    drawWheel();
-});
+const shopProducts = [
+    { id: 101, name: "Pro Plan Kuru Mama 750gr", price: 250, img: "https://images.unsplash.com/photo-1583337130417-3346a1be7dee?w=300&q=80" },
+    { id: 102, name: "Yaş Mama Mix 6'lı", price: 180, img: "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?w=300&q=80" },
+    { id: 103, name: "İç/Dış Parazit Bakımı", price: 450, img: "https://images.unsplash.com/photo-1623387641168-d9803ddd3f35?w=300&q=80" },
+    { id: 104, name: "Sıcak Kedi Yatağı", price: 320, img: "https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?w=300&q=80" },
+    { id: 105, name: "Köpek Çiğneme Oyuncağı", price: 120, img: "https://images.unsplash.com/photo-1576201836106-db1758fd1c97?w=300&q=80" },
+    { id: 106, name: "Vitamin Takviyesi", price: 200, img: "https://images.unsplash.com/photo-1629909613654-28e377c37b09?w=300&q=80" }
+];
 
-// --- SPLASH & AUTH YÖNETİMİ ---
-function initSplash() {
-    // Videonun 8 saniye oynadıktan sonra Login ekranına atması
-    setTimeout(() => {
-        const splash = document.getElementById('splash-screen');
-        splash.style.opacity = '0';
-        setTimeout(() => {
-            splash.classList.add('hidden');
-            document.getElementById('view-auth').classList.remove('hidden');
-        }, 1000);
-    }, 8000); // İsteğe göre 8000ms
+let cartTotal = 0;
+let currentPaymentBase = 0;
 
-    // Giriş Formu
-    document.getElementById('login-form').addEventListener('submit', (e) => {
-        e.preventDefault();
-        const u = document.getElementById('login-user').value;
-        const p = document.getElementById('login-pass').value;
-        
-        if(u === 'admin' && p === 'admin') {
-            document.getElementById('view-auth').classList.add('hidden');
-            document.getElementById('main-header').classList.remove('hidden');
-            document.getElementById('main-content').classList.remove('hidden');
-            document.getElementById('bottom-nav').classList.remove('hidden');
-            
-            navTo('home');
-            renderAnimals();
-            renderStore();
-            renderLeaderboard();
-        } else {
-            alert('Test için kullanıcı adı: admin, şifre: admin giriniz.');
-        }
-    });
-}
-
-function toggleAuth(mode) {
-    const login = document.getElementById('login-section');
-    const register = document.getElementById('register-section');
-    if (mode === 'register') {
-        login.classList.add('hidden');
-        register.classList.remove('hidden');
-    } else {
-        register.classList.add('hidden');
-        login.classList.remove('hidden');
-    }
+// --- Navigasyon ve Temel İşlevler ---
+function login() {
+    document.getElementById('view-login').classList.remove('active');
+    document.getElementById('main-navbar').style.display = 'flex';
+    document.getElementById('bottom-nav').style.display = 'flex';
+    navigate('view-home');
+    renderAnimals();
+    renderShop();
 }
 
 function logout() {
-    document.getElementById('main-header').classList.add('hidden');
-    document.getElementById('main-content').classList.add('hidden');
-    document.getElementById('bottom-nav').classList.add('hidden');
-    document.getElementById('view-auth').classList.remove('hidden');
-    toggleAuth('login');
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById('main-navbar').style.display = 'none';
+    document.getElementById('bottom-nav').style.display = 'none';
+    document.getElementById('view-login').classList.add('active');
 }
 
-// --- NAVİGASYON ---
-function navTo(tabId) {
-    // İçerik Toggler
-    ['home', 'petfon', 'leaderboard', 'profile'].forEach(id => {
-        document.getElementById(`tab-${id}`).classList.add('hidden');
-    });
-    document.getElementById(`tab-${tabId}`).classList.remove('hidden');
-
-    // Renk Toggler
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('text-brand-orange');
-        btn.classList.add('text-gray-400');
-    });
-    const activeBtn = document.querySelector(`.nav-btn[data-target="${tabId}"]`);
-    activeBtn.classList.remove('text-gray-400');
-    activeBtn.classList.add('text-brand-orange');
+function navigate(viewId, navElement = null) {
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    document.getElementById(viewId).classList.add('active');
+    
+    if(navElement) {
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        navElement.classList.add('active');
+    }
 }
 
-// --- RENDER FONKSİYONLARI ---
+// --- Render Fonksiyonları ---
 function renderAnimals() {
-    const container = document.getElementById('tab-home');
-    container.innerHTML = state.animals.map(animal => {
-        const percent = Math.min((animal.raised / animal.target) * 100, 100);
-        return `
-        <div class="bg-white rounded-3xl overflow-hidden shadow-sm border border-gray-100 mb-6">
-            <div class="relative h-56">
-                <img src="${animal.img}" class="w-full h-full object-cover">
-                <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow-sm flex items-center gap-1">
-                    <i data-lucide="map-pin" class="w-3 h-3 text-brand-orange"></i> ${animal.shelter}
-                </div>
-            </div>
-            <div class="p-5 space-y-4">
-                <div>
-                    <h3 class="text-xl font-black text-gray-900">${animal.name}</h3>
-                    <p class="text-sm text-gray-500 mt-1">${animal.issue}</p>
-                </div>
-                
-                <div class="space-y-2">
-                    <div class="flex justify-between text-sm font-bold">
-                        <span class="text-brand-orange">Toplanan: ₺${animal.raised}</span>
-                        <span class="text-gray-500">Hedef: ₺${animal.target}</span>
+    const list = document.getElementById('animal-list');
+    list.innerHTML = '';
+    animals.forEach(animal => {
+        let percent = (animal.gathered / animal.target) * 100;
+        list.innerHTML += `
+            <div class="animal-card">
+                <img src="${animal.img}" alt="${animal.name}">
+                <div class="card-body">
+                    <h3>${animal.name}</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> ${animal.shelter}</p>
+                    <div style="margin-top:10px; background:#eee; height:8px; border-radius:4px; overflow:hidden;">
+                        <div style="width:${percent}%; background:var(--primary-color); height:100%;"></div>
                     </div>
-                    <div class="w-full bg-gray-100 rounded-full h-3">
-                        <div class="bg-brand-orange h-3 rounded-full transition-all duration-1000" style="width: ${percent}%"></div>
+                    <div style="display:flex; justify-content:space-between; font-size:12px; margin-top:5px;">
+                        <span>Toplanan: ₺${animal.gathered}</span>
+                        <span>Hedef: ₺${animal.target}</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-outline" onclick="openAnimalDetail(${animal.id})">Detayları Gör</button>
+                        <button class="btn btn-primary" onclick="openPaymentModal(0, 'custom')">Destek Ol</button>
                     </div>
                 </div>
-
-                <div class="flex gap-2 pt-2">
-                    <button class="p-3 bg-gray-50 rounded-xl hover:bg-gray-100 text-gray-600"><i data-lucide="share-2" class="w-5 h-5"></i></button>
-                    <button class="p-3 bg-gray-50 rounded-xl hover:bg-gray-100 text-gray-600"><i data-lucide="bookmark" class="w-5 h-5"></i></button>
-                    <button onclick="openDonation('${animal.name}')" class="flex-1 bg-brand-orange text-white font-bold rounded-xl shadow-md hover:bg-orange-600 transition">Destek Ol</button>
-                </div>
             </div>
-        </div>
         `;
-    }).join('');
-    lucide.createIcons();
+    });
 }
 
-function renderStore() {
-    const container = document.getElementById('store-grid');
-    container.innerHTML = state.products.map(p => `
-        <div class="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 flex flex-col justify-between">
-            <img src="${p.img}" class="w-full h-28 object-cover rounded-xl mb-3">
-            <div>
-                <h4 class="font-bold text-xs text-gray-800 line-clamp-2">${p.name}</h4>
-                <p class="text-brand-orange font-black text-sm mt-1">₺${p.price}</p>
-            </div>
-            <button onclick="addToCart(${p.id})" class="w-full mt-3 py-2 bg-brand-cream text-brand-orange font-bold text-xs rounded-xl border border-orange-100 hover:bg-brand-orange hover:text-white transition">Sepete Ekle</button>
-        </div>
-    `).join('');
-}
-
-function renderLeaderboard() {
-    const container = document.getElementById('leaderboard-list');
-    container.innerHTML = state.leaderboard.map((l, index) => `
-        <div class="bg-white p-4 rounded-2xl flex items-center justify-between border border-gray-100 shadow-sm">
-            <div class="flex items-center gap-4">
-                <div class="w-8 h-8 rounded-full ${index === 0 ? 'bg-yellow-100 text-yellow-600' : 'bg-gray-100 text-gray-500'} flex items-center justify-center font-black">
-                    #${index + 1}
+function openAnimalDetail(id) {
+    const animal = animals.find(a => a.id === id);
+    const content = document.getElementById('animal-detail-content');
+    
+    content.innerHTML = `
+        <img src="${animal.img}" alt="${animal.name}" class="detail-header-img" style="margin:-20px -20px 20px -20px; width:calc(100% + 40px);">
+        <h2>${animal.name}</h2>
+        <div class="info-badge"><i class="fas fa-map-marker-alt"></i> ${animal.location}</div>
+        <div class="info-badge"><i class="fas fa-home"></i> ${animal.shelter}</div>
+        <h4 class="mt-10">Sağlık Durumu</h4>
+        <p>${animal.ailment}</p>
+        
+        <div class="product-support-list">
+            <h4>${animal.name} İçin Özel İhtiyaçlar</h4>
+            <div class="support-item">
+                <div class="support-item-info">
+                    <span>5kg Kuru Mama Gönder</span>
+                    <span class="support-item-price">₺400</span>
                 </div>
-                <div>
-                    <h4 class="font-bold text-gray-900 text-sm">${l.name}</h4>
-                    <span class="text-[10px] bg-brand-green/10 text-brand-green px-2 py-0.5 rounded-full font-bold">${l.badge}</span>
-                </div>
+                <button class="btn btn-primary" onclick="openPaymentModal(400, 'fixed')">Destek Ol</button>
             </div>
-            <span class="font-black text-brand-orange">${l.amount}</span>
+            <div class="support-item">
+                <div class="support-item-info">
+                    <span>Tedavi Masrafına Katkı (Minik)</span>
+                    <span class="support-item-price">₺250</span>
+                </div>
+                <button class="btn btn-primary" onclick="openPaymentModal(250, 'fixed')">Destek Ol</button>
+            </div>
         </div>
-    `).join('');
+        <button class="btn btn-outline btn-block mt-20" onclick="openPaymentModal(0, 'custom')">Serbest Miktarda Destek Ol</button>
+    `;
+    navigate('view-animal-detail');
 }
 
-// --- BAĞIŞ SİSTEMİ (%12 Kesinti) ---
-function openDonation(name) {
-    document.getElementById('donate-animal-name').innerText = name;
-    document.getElementById('donate-amount').value = '';
+function renderShop() {
+    const list = document.getElementById('product-list');
+    list.innerHTML = '';
+    shopProducts.forEach(product => {
+        list.innerHTML += `
+            <div class="product-card">
+                <img src="${product.img}" alt="${product.name}">
+                <h4>${product.name}</h4>
+                <div class="price">₺${product.price}</div>
+                <button class="btn btn-outline btn-block" style="font-size:12px; padding:8px;" onclick="addToCart(${product.price})">Sepete Ekle</button>
+            </div>
+        `;
+    });
+}
+
+function addToCart(price) {
+    cartTotal += price;
+    let countEl = document.getElementById('cart-count');
+    countEl.innerText = parseInt(countEl.innerText) + 1;
+    
+    // Küçük geri bildirim animasyonu
+    countEl.style.transform = "scale(1.5)";
+    setTimeout(() => { countEl.style.transform = "scale(1)"; }, 200);
+}
+
+// --- Ödeme ve %15 Komisyon Mantığı ---
+function openPaymentModal(amount, type) {
+    document.getElementById('payment-modal').style.display = 'flex';
     document.getElementById('fee-consent').checked = false;
-    calculateFee();
-    toggleDonationBtn();
+    document.getElementById('pay-btn').disabled = true;
     
-    const modal = document.getElementById('donation-modal');
-    const sheet = document.getElementById('donation-sheet');
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modal.classList.add('modal-active');
-        sheet.classList.add('sheet-active');
-    }, 10);
+    const customGroup = document.getElementById('custom-amount-group');
+    const customInput = document.getElementById('custom-amount');
+    
+    if(type === 'custom') {
+        customGroup.style.display = 'block';
+        customInput.value = '';
+        currentPaymentBase = 0;
+    } else if (type === 'cart') {
+        customGroup.style.display = 'none';
+        currentPaymentBase = cartTotal;
+        if(cartTotal === 0) {
+            alert("Sepetiniz boş.");
+            closeModal('payment-modal');
+            return;
+        }
+    } else { // fixed
+        customGroup.style.display = 'none';
+        currentPaymentBase = amount;
+    }
+    
+    updatePaymentUI();
 }
 
-function closeDonation() {
-    const modal = document.getElementById('donation-modal');
-    const sheet = document.getElementById('donation-sheet');
-    modal.classList.remove('modal-active');
-    sheet.classList.remove('sheet-active');
-    setTimeout(() => modal.classList.add('hidden'), 300);
+function calculateTotal() {
+    const inputVal = parseFloat(document.getElementById('custom-amount').value) || 0;
+    currentPaymentBase = inputVal;
+    updatePaymentUI();
 }
 
-function calculateFee() {
-    const amt = parseFloat(document.getElementById('donate-amount').value) || 0;
-    const fee = amt * 0.12;
-    const total = amt + fee;
+function updatePaymentUI() {
+    let fee = currentPaymentBase * 0.15;
+    let total = currentPaymentBase + fee;
     
-    document.getElementById('summary-base').innerText = `₺${amt.toFixed(2)}`;
-    document.getElementById('summary-fee').innerText = `₺${fee.toFixed(2)}`;
-    document.getElementById('summary-total').innerText = `₺${total.toFixed(2)}`;
+    document.getElementById('payment-subtotal').innerText = `₺${currentPaymentBase.toFixed(2)}`;
+    document.getElementById('payment-fee').innerText = `₺${fee.toFixed(2)}`;
+    document.getElementById('payment-total').innerText = `₺${total.toFixed(2)}`;
+    
+    togglePayButton();
 }
 
-function toggleDonationBtn() {
-    const checked = document.getElementById('fee-consent').checked;
-    const amt = parseFloat(document.getElementById('donate-amount').value) || 0;
-    const btn = document.getElementById('btn-submit-donate');
+function togglePayButton() {
+    const isChecked = document.getElementById('fee-consent').checked;
+    const btn = document.getElementById('pay-btn');
     
-    if (checked && amt > 0) {
+    if(isChecked && currentPaymentBase > 0) {
         btn.disabled = false;
-        btn.classList.remove('bg-gray-300', 'cursor-not-allowed');
-        btn.classList.add('bg-brand-orange');
     } else {
         btn.disabled = true;
-        btn.classList.add('bg-gray-300', 'cursor-not-allowed');
-        btn.classList.remove('bg-brand-orange');
     }
 }
 
-function processDonation() {
-    alert("Payment System Under Maintenance\n\n(Ödeme Sistemi Bakımda)");
-    closeDonation();
+function completePayment() {
+    alert("Desteğiniz başarıyla alınmıştır. Patili dostlarımız adına teşekkür ederiz!");
+    closeModal('payment-modal');
+    cartTotal = 0;
+    document.getElementById('cart-count').innerText = "0";
 }
 
-// --- SEPET SİSTEMİ (PETFON) ---
-function addToCart(id) {
-    const prod = state.products.find(p => p.id === id);
-    if(prod) {
-        state.cart.push(prod);
-        updateCartBadge();
-    }
-}
-
-function updateCartBadge() {
-    const badge = document.getElementById('cart-badge');
-    badge.innerText = state.cart.length;
-    if(state.cart.length > 0) {
-        badge.classList.remove('hidden');
-    } else {
-        badge.classList.add('hidden');
-    }
-}
-
-function openCart() {
-    const modal = document.getElementById('cart-modal');
-    const sheet = document.getElementById('cart-sheet');
-    const container = document.getElementById('cart-items');
-    
-    if(state.cart.length === 0) {
-        container.innerHTML = `<p class="text-center text-gray-500 mt-10 text-sm">Sepetiniz boş. Sokaktaki dostlarımız için bir şeyler ekleyin.</p>`;
-        document.getElementById('cart-total').innerText = '₺0';
-    } else {
-        let total = 0;
-        container.innerHTML = state.cart.map(c => {
-            total += c.price;
-            return `
-            <div class="flex justify-between items-center bg-gray-50 p-3 rounded-xl">
-                <span class="text-sm font-semibold">${c.name}</span>
-                <span class="text-brand-orange font-bold">₺${c.price}</span>
-            </div>
-            `;
-        }).join('');
-        document.getElementById('cart-total').innerText = `₺${total}`;
-    }
-
-    modal.classList.remove('hidden');
-    setTimeout(() => {
-        modal.classList.add('modal-active');
-        sheet.classList.add('sheet-active');
-    }, 10);
-}
-
-function closeCart() {
-    const modal = document.getElementById('cart-modal');
-    const sheet = document.getElementById('cart-sheet');
-    modal.classList.remove('modal-active');
-    sheet.classList.remove('sheet-active');
-    setTimeout(() => modal.classList.add('hidden'), 300);
-}
-
-function checkout() {
-    if(state.cart.length === 0) return alert('Sepetiniz boş!');
-    alert("Payment System Under Maintenance\n\nÜrünler barınak adresine iletilecektir.");
-    state.cart = [];
-    updateCartBadge();
-    closeCart();
-}
-
-// --- PATİ ÇARKI (Canvas Tabanlı) ---
-function drawWheel() {
-    const canvas = document.getElementById('wheel-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    const prizes = state.wheelPrizes;
-    const colors = ['#FF7A00', '#FFB703', '#2E7D32', '#5D4037', '#FB8500', '#023047', '#E76F51'];
-    
-    const arc = Math.PI * 2 / prizes.length;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = centerX;
-
-    for (let i = 0; i < prizes.length; i++) {
-        const angle = i * arc;
-        
-        ctx.beginPath();
-        ctx.fillStyle = colors[i % colors.length];
-        ctx.moveTo(centerX, centerY);
-        ctx.arc(centerX, centerY, radius, angle, angle + arc);
-        ctx.fill();
-
-        ctx.save();
-        ctx.fillStyle = 'white';
-        ctx.font = 'bold 10px Inter';
-        ctx.translate(centerX + Math.cos(angle + arc / 2) * (radius * 0.65), 
-                      centerY + Math.sin(angle + arc / 2) * (radius * 0.65));
-        ctx.rotate(angle + arc / 2 + Math.PI / 2);
-        const textWidth = ctx.measureText(prizes[i]).width;
-        ctx.fillText(prizes[i], -textWidth / 2, 0);
-        ctx.restore();
-    }
-}
-
+// --- Profil: Çark ve Destek Kartı Mantığı ---
+let isSpinning = false;
 function spinWheel() {
-    if (!state.user.canSpinWheel) return;
+    if(isSpinning) return;
+    isSpinning = true;
     
-    const canvas = document.getElementById('wheel-canvas');
-    const btn = document.getElementById('btn-spin');
-    const timerEl = document.getElementById('wheel-timer');
+    const wheel = document.getElementById('wheel');
+    const resultText = document.getElementById('wheel-result');
+    const btn = document.getElementById('spin-btn');
     
+    resultText.innerText = "";
     btn.disabled = true;
-    btn.innerText = 'Çevriliyor...';
-    btn.classList.add('bg-gray-400');
     
-    // Rastgele dönüş açısı (Min 5 tur)
-    const randomDeg = Math.floor(1800 + Math.random() * 1800);
-    canvas.style.transform = `rotate(${randomDeg}deg)`;
+    // Rastgele dönüş açısı (en az 5 tur = 1800 derece)
+    const randomDegree = Math.floor(Math.random() * 360) + 1800; 
+    wheel.style.transform = `rotate(${randomDegree}deg)`;
     
     setTimeout(() => {
-        // Çark durdu
-        alert('Tebrikler! Sokak hayvanları için sürpriz destek ödülü kazandınız!');
-        state.user.canSpinWheel = false;
+        isSpinning = false;
+        btn.disabled = false;
         
-        // 72 Saat bekleme durumu UI güncellemesi
-        btn.classList.add('hidden');
-        timerEl.classList.remove('hidden');
-    }, 4000); // CSS transition süresi ile aynı
+        // Hangi dilimin geldiğini hesaplama (Basit simülasyon)
+        const actualDegree = randomDegree % 360;
+        let prize = "";
+        
+        // Çark dilimleri tersten okunur çünkü ok sabit, çark dönüyor
+        if (actualDegree >= 0 && actualDegree < 60) prize = "1 Kutu Yaş Mama";
+        else if (actualDegree >= 60 && actualDegree < 120) prize = "Sürpriz Oyuncak";
+        else if (actualDegree >= 120 && actualDegree < 180) prize = "100gr Yaş Mama";
+        else if (actualDegree >= 180 && actualDegree < 240) prize = "Ödül Maması";
+        else if (actualDegree >= 240 && actualDegree < 300) prize = "150gr Kuru Mama";
+        else prize = "İç/Dış Parazit";
+
+        resultText.innerHTML = `Tebrikler! <br><span style="color:#333;">${prize} kazandınız.</span><br> <span style="font-size:12px; font-weight:normal; color:#777;">Ödülünüz sistem üzerinden bir barınağa yönlendirilmiştir.</span>`;
+        
+    }, 4000); // CSS transition süresi ile aynı (4s)
+}
+
+function showSupportCard() {
+    document.getElementById('support-card-modal').style.display = 'flex';
+}
+
+function closeModal(id) {
+    document.getElementById(id).style.display = 'none';
 }
